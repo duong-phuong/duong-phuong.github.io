@@ -3260,6 +3260,20 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   function syncCatcher(){ catcher.style.display=nav.classList.contains('on')?'block':'none'; }
   new MutationObserver(syncCatcher).observe(nav,{attributes:true,attributeFilter:['class']});
   syncCatcher();
+  /* Safari's bottom toolbar covers the page: the tab bar moves up so it sits just above the visible area,
+     and follows the toolbar when it shows or hides. It never moves below its place. */
+  var vv=window.visualViewport, shift=0;
+  function placeNav(){
+    if(!vv) return;
+    var visibleBottom=vv.offsetTop+vv.height;
+    var natural=nav.getBoundingClientRect().bottom-shift;
+    shift=Math.min(0, visibleBottom-natural);
+    var t='0 '+shift.toFixed(2)+'px';
+    nav.style.translate=t; catcher.style.translate=t;
+  }
+  if(vv){ vv.addEventListener('resize',placeNav); vv.addEventListener('scroll',placeNav); }
+  window.addEventListener('resize',placeNav);
+  placeNav();
   var _show=show;
   show=function(name){ _show(name); sync(name); };
 })();
