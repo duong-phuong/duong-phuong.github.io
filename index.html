@@ -50,7 +50,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #v-home .i6{font-family:var(--sans);font-weight:600}
 #v-home [data-lang]{cursor:pointer}
 @keyframes hcaret{50%{opacity:0}}
-#hcar{position:absolute;left:0;top:283.792px;width:390px;height:394.457px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+#hcar{position:absolute;z-index:1;left:0;top:283.792px;width:390px;height:394.457px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
 #hcar.drag{cursor:grabbing}
 #v-home.hgate #homeSvg,#v-home.hgate #hcar{pointer-events:none}   /* Home content fades in while the Home pill opens (opacity set from JS) */
 #hcar .hc{position:absolute;left:0;top:0;width:289.829px;overflow:hidden;background-size:cover;background-position:center;will-change:transform,filter;pointer-events:none}
@@ -3287,7 +3287,7 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
     rs.setProperty('--vw',w+'px'); rs.setProperty('--vh',h+'px');
     rs.setProperty('--vt',(vv?vv.offsetTop:0)+'px'); rs.setProperty('--vl',(vv?vv.offsetLeft:0)+'px');
     var s=Math.min(1,w/390);
-    scr.style.height=Math.max(844,h/s).toFixed(1)+'px';
+    scr.style.height=(h/s).toFixed(1)+'px';
     scr.style.top='0px'; scr.style.margin='0px';
     scr.style.left='0px'; scr.style.transformOrigin='0 0';
     scr.style.transform='translate('+((w-390*s)/2).toFixed(2)+'px,0) scale('+s.toFixed(4)+')';
