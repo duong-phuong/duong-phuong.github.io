@@ -104,6 +104,11 @@ g.pb.pop{animation:pbpop .3s ease-out}
 #navwrap .hit{pointer-events:all;cursor:pointer;fill:transparent}
 </style>
 <style>#frames iframe{position:absolute;left:0;top:0;width:390px;height:844px;border:0;display:none}</style>
+<style>
+/* LOCK + FIT: page is locked, the 390x844 screen is scaled to the visible area (JS at the end); only #v-quiz scrolls inside itself */
+html,body{position:fixed;inset:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:pan-x pan-y}
+.screen{position:absolute;left:50%;top:50%;margin:-422px 0 0 -195px;max-width:none;flex:none;transform-origin:50% 50%}
+</style>
 </head>
 <body>
 <main class="screen" id="app">
@@ -608,19 +613,20 @@ function hcInit(){
     if(HOME_PHOTOS.length) el.style.backgroundImage=`url("${HOME_PHOTOS[i]}")`; else el.style.background=HOME_PH[i%HOME_PH.length];
     box.appendChild(el); HC.els.push(el);
   }
+  const hcSc=()=>document.getElementById("app").getBoundingClientRect().width/390||1;
   let d=null;
   box.addEventListener("pointerdown",e=>{ cancelAnimationFrame(HC.raf); d={x:e.clientX,p:HC.pos,s:[[e.timeStamp,e.clientX]],m:0}; box.setPointerCapture(e.pointerId); box.classList.add("drag"); });
   box.addEventListener("pointermove",e=>{
-    if(!d) return; const dx=e.clientX-d.x; d.m=Math.max(d.m,Math.abs(dx));
+    if(!d) return; const dx0=e.clientX-d.x, dx=dx0/hcSc(); d.m=Math.max(d.m,Math.abs(dx0));
     HC.pos=d.p-dx/HC_G.step; d.s.push([e.timeStamp,e.clientX]); if(d.s.length>6) d.s.shift(); hcLayout();
   });
   const end=e=>{
     if(!d) return; box.classList.remove("drag");
     const a=d.s[0], b=d.s[d.s.length-1], dt=Math.max(16,b[0]-a[0]);
-    let v=-(b[1]-a[1])/dt*1000/HC_G.step; v=Math.max(-9,Math.min(9,v));
+    let v=-(b[1]-a[1])/hcSc()/dt*1000/HC_G.step; v=Math.max(-9,Math.min(9,v));
     const base=Math.round(d.p); let target;
     if(d.m<6){   // tap: the photo behind steps forward
-      const x=e.clientX-box.getBoundingClientRect().left;
+      const x=(e.clientX-box.getBoundingClientRect().left)/hcSc();
       target=x<HC_G.cx?base-1:(x>HC_G.cx+289.829?base+1:base); v=0;
     } else target=Math.max(base-2,Math.min(base+2,Math.round(HC.pos+v*0.22)));
     d=null; hcAnim(target,v);
@@ -689,7 +695,7 @@ function finishFlow(){
   if(FINISHING) return; FINISHING=true; BURSTING=true;   // BURSTING also blocks taps on the tab bar meanwhile
   const NS="http://www.w3.org/2000/svg", app=document.getElementById("app"), ap=app.getBoundingClientRect();
   const btn=document.getElementById("finishBtn"), r=btn.getBoundingClientRect();
-  const w=r.width, h=r.height, tx=r.left-ap.left+w/2, ty=r.top-ap.top+h/2, base=r.top-ap.top;
+  const sc=ap.width/390||1, w=r.width/sc, h=r.height/sc, tx=(r.left-ap.left)/sc+w/2, ty=(r.top-ap.top)/sc+h/2, base=(r.top-ap.top)/sc;
   const quiz=document.getElementById("v-quiz"), res=document.getElementById("v-result"), nav=document.getElementById("navwrap");
   const D=44, G=zeroGlyph(), cxT=G?G.cx:RES.cx, cyT=G?G.cy:resBase()-0.7275*62.4;   // ball size, centre of the score number (measured from the font)
   const RMAX=Math.hypot(Math.max(tx,390-tx),Math.max(ty,844-ty))+10;   // radius that covers the whole screen from the ball
@@ -753,7 +759,7 @@ function scrollInertia(el,to,dur,done){   // fast start, long soft stop
 }
 function finishRise(){   // the ticket comes up from behind the tab bar with a springy overshoot
   const f=document.getElementById("finish"), r=document.getElementById("finishBtn").getBoundingClientRect();
-  let y=781.82-(r.top+r.height/2), v=0, t0=performance.now(); const w=11, z=0.6;
+  let y=781.82-((r.top-document.getElementById("app").getBoundingClientRect().top)+r.height/2)/(document.getElementById("app").getBoundingClientRect().width/390||1), v=0, t0=performance.now(); const w=11, z=0.6;
   f.style.transform=`translateY(${y.toFixed(2)}px)`; f.classList.add("ready");
   (function loop(now){
     const dt=Math.min(0.032,(now-t0)/1000); t0=now;
@@ -2007,7 +2013,8 @@ body{background:#d9d9d9;display:flex;justify-content:center;-webkit-font-smoothi
 .fld{position:absolute;border:0;background:transparent;outline:none;font-family:"Cascadia Code","Cascadia Mono",monospace;color:#000;resize:none}
 .fld::placeholder{color:#CCCCCC}
 #nameIn{left:43.87px;top:226px;width:280px;height:24px;font-size:13.16px}
-#msgIn{left:43.87px;top:474px;width:306px;height:226px;font-size:13.16px;line-height:20.3px}
+#msgIn{left:43.87px;top:474px;width:306px;height:226px;font-size:13.16px;line-height:20.3px;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#msgIn::-webkit-scrollbar{display:none}
 #fileIn{display:none}
 .press{transform-box:fill-box;transform-origin:center;cursor:pointer}
 .scr.anim{transition:transform .38s cubic-bezier(.32,.72,0,1)}
@@ -3221,6 +3228,20 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   syncCatcher();
   var _show=show;
   show=function(name){ _show(name); sync(name); };
+})();
+</script>
+<script>
+/* FIT: scale the 390x844 screen down to the visible area (never up); skipped while a tab's keyboard is open */
+(function(){
+  var scr=document.getElementById('app');
+  function fit(){
+    var a=document.activeElement; if(a&&a.tagName==='IFRAME') return;
+    var s=Math.min(1,window.innerWidth/390,window.innerHeight/844);
+    scr.style.transform=s>=0.999?'':'scale('+s.toFixed(4)+')';
+  }
+  window.addEventListener('resize',fit);
+  window.addEventListener('orientationchange',function(){setTimeout(fit,250);});
+  fit();
 })();
 </script>
 </body>
