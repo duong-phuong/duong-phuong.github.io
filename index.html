@@ -18,18 +18,18 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* COVER */
 #v-cover{background:var(--gray)}
-.cover-head{position:absolute;left:0;top:0;width:100%;height:117.6px;background:var(--card)}
-.lang{position:absolute;left:299.598px;top:67.085px;width:61.704px;height:17.207px}
+.cover-head{position:absolute;left:0;top:0;width:100%;height:49px;background:var(--card)}
+.lang{position:absolute;left:299.598px;top:16px;width:61.704px;height:17.207px}
 .lang svg{display:block}
 .lang [data-lang]{cursor:pointer}
 .lt{font-family:var(--mono);font-weight:500;font-kerning:none;white-space:pre}
-.hero{position:absolute;left:0;right:0;top:117.6px;bottom:0;background:var(--gray)}
+.hero{position:absolute;left:0;right:0;top:49px;bottom:0;background:var(--gray)}
 .title{position:absolute;left:0;right:0;top:152px;text-align:center;font-weight:560;font-size:62px;line-height:67px;letter-spacing:-1px;color:var(--cream)}
-.eyebrow{position:absolute;left:0;right:0;top:618.7px;text-align:center;font-size:12.5px;line-height:16px;font-weight:600;letter-spacing:.2px;text-transform:uppercase}
-.date{position:absolute;left:0;right:0;top:638px;text-align:center;font-size:42px;line-height:44px;font-weight:750}
-.venue{position:absolute;left:0;right:0;top:692px;text-align:center;font-size:17px;line-height:24px;font-weight:500}
-.address{position:absolute;left:0;right:0;top:713.9px;text-align:center;font-size:13px;line-height:20px;font-weight:550}
-.cta{position:absolute;left:88.4px;top:763.4px;width:212.4px;height:34.8px;border-radius:999px;background:var(--yellow);color:var(--ink);font-size:15px;font-weight:700;line-height:1;white-space:nowrap}
+.eyebrow{position:absolute;left:0;right:0;bottom:209.3px;text-align:center;font-size:12.5px;line-height:16px;font-weight:600;letter-spacing:.2px;text-transform:uppercase}
+.date{position:absolute;left:0;right:0;bottom:162px;text-align:center;font-size:42px;line-height:44px;font-weight:750}
+.venue{position:absolute;left:0;right:0;bottom:128px;text-align:center;font-size:17px;line-height:24px;font-weight:500}
+.address{position:absolute;left:0;right:0;bottom:110.1px;text-align:center;font-size:13px;line-height:20px;font-weight:550}
+.cta{position:absolute;left:88.4px;bottom:45.8px;width:212.4px;height:34.8px;border-radius:999px;background:var(--yellow);color:var(--ink);font-size:15px;font-weight:700;line-height:1;white-space:nowrap}
 
 #burst{position:absolute;left:0;top:0;width:0;height:0;border-radius:50%;background:#F6E600;z-index:15;display:none;pointer-events:none}
 /* names revealed on the yellow (Cover -> Home) */
@@ -57,7 +57,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* QUIZ */
 #v-quiz{background:var(--card);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:130px}
-#qhead{position:sticky;top:0;z-index:5;height:126.99px;background:var(--yellow)}
+#qhead{position:sticky;top:0;z-index:5;height:49px;background:var(--yellow)}
 #qhead svg,#cards svg{display:block}
 .qc{display:block;overflow:visible}
 .qc .chip{fill:none;stroke:#121212;stroke-width:.66;cursor:pointer}
@@ -98,7 +98,7 @@ g.pb{transform-box:fill-box;transform-origin:center}
 g.pb.pop{animation:pbpop .3s ease-out}
 
 /* NAV overlay */
-#navwrap{position:absolute;left:0;top:0;width:390px;height:844px;pointer-events:none;z-index:20;display:none}
+#navwrap{position:absolute;left:0;top:auto;bottom:0;width:390px;height:844px;pointer-events:none;z-index:20;display:none}
 #navwrap.on{display:block}
 #navwrap svg{position:absolute;left:0;top:0}
 #navwrap .hit{pointer-events:all;cursor:pointer;fill:transparent}
@@ -532,7 +532,7 @@ function renderHome(animate){
   const vn=LANG==="vi", heartX=28.166+h.sub.length*7.7543+6.912, capX=194.765-h.cap.length*6.4804/2;
   const para=h.p.map((l,i)=>`<text class="m4" x="26.798" y="${[186.344,203.779,221.214,238.649][i]}" font-size="14.2444" letter-spacing="-0.2849" fill="#666" id="hp${i}">${animate?"":esc(l)}</text>`).join("");
   document.getElementById("homeSvg").innerHTML=`<svg width="390" height="844" viewBox="0 0 390 844" role="img" aria-label="Dương và Phương">
-<g transform="translate(299.598 67.085)">${langToggleInner(vn)}</g>
+<g transform="translate(299.598 16)">${langToggleInner(vn)}</g>
 <text class="m5" x="28.166" y="106.66" font-size="13.7012" letter-spacing="-0.274" fill="#666">${esc(h.sub)}</text>
 <path transform="translate(${heartX.toFixed(3)} 98.806)" d="${HOME_HEART}" fill="#F43C1E"/>
 <text class="i7" x="26.798" y="152.267" font-size="40.0944" letter-spacing="-1.6038" fill="#333">Dương <tspan class="i6" font-size="23.7724" letter-spacing="-0.9509">${h.and}</tspan> Phương</text>
@@ -801,7 +801,7 @@ function stepSVG(){
   return g;
 }
 function renderHeader(){
-  document.getElementById("qhead").innerHTML=`<svg width="390" height="126.99" viewBox="0 0 390 126.99">${stepSVG()}</svg>`;
+  document.getElementById("qhead").innerHTML=`<svg width="390" height="49" viewBox="0 78 390 49">${stepSVG()}</svg>`;
 }
 function cardSVG(i){
   const st=S[i], q=QUESTIONS[ORDER[i]], focus=(i===FOCUS);
@@ -872,7 +872,7 @@ document.getElementById("qhead").addEventListener("click",e=>{
   const g=e.target.closest("[data-step]"); if(!g) return;
   const i=+g.dataset.step; FOCUS=i; renderQuiz();
   const card=document.querySelector(`[data-card="${i}"]`);
-  document.getElementById("v-quiz").scrollTo({top:card.offsetTop-126.99, behavior:"smooth"});
+  document.getElementById("v-quiz").scrollTo({top:card.offsetTop-49, behavior:"smooth"});
 });
 
 /* ============ RESULT ============ */
@@ -1129,7 +1129,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #v-home,#v-soon{background:var(--cream);color:var(--ink);display:none;align-items:center;justify-content:center;text-align:center;font-family:var(--mono);font-size:13px;line-height:20px;padding:0 40px}
 #v-home.on,#v-soon.on{display:flex}
 /* NAV overlay */
-#navwrap{position:absolute;left:0;top:0;width:390px;height:844px;pointer-events:none;z-index:20;display:none}
+#navwrap{position:absolute;left:0;top:auto;bottom:0;width:390px;height:844px;pointer-events:none;z-index:20;display:none}
 #navwrap.on{display:block}
 #navwrap svg{position:absolute;left:0;top:0}
 #navwrap .hit{pointer-events:all;cursor:pointer;fill:transparent}
@@ -3221,7 +3221,7 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
      tab page inside the frame. A transparent strip over the icons passes those taps to the page. */
   var nav=document.getElementById('navwrap');
   var catcher=document.createElement('div');
-  catcher.style.cssText='position:absolute;left:0;top:745px;width:390px;height:70px;z-index:19;background:transparent;display:none';
+  catcher.style.cssText='position:absolute;left:0;top:auto;bottom:29px;width:390px;height:70px;z-index:19;background:transparent;display:none';
   nav.parentNode.insertBefore(catcher,nav);
   function syncCatcher(){ catcher.style.display=nav.classList.contains('on')?'block':'none'; }
   new MutationObserver(syncCatcher).observe(nav,{attributes:true,attributeFilter:['class']});
@@ -3286,8 +3286,11 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
     var rs=document.documentElement.style;
     rs.setProperty('--vw',w+'px'); rs.setProperty('--vh',h+'px');
     rs.setProperty('--vt',(vv?vv.offsetTop:0)+'px'); rs.setProperty('--vl',(vv?vv.offsetLeft:0)+'px');
-    var s=Math.min(1,w/390,h/844);
-    scr.style.transform=s>=0.999?'':'scale('+s.toFixed(4)+')';
+    var s=Math.min(1,w/390);
+    scr.style.height=Math.max(844,h/s).toFixed(1)+'px';
+    scr.style.top='0px'; scr.style.margin='0px';
+    scr.style.left='0px'; scr.style.transformOrigin='0 0';
+    scr.style.transform='translate('+((w-390*s)/2).toFixed(2)+'px,0) scale('+s.toFixed(4)+')';
     tint();
   }
   window.addEventListener('resize',fit);
