@@ -2754,6 +2754,8 @@ function show(name,arg,opt={}){
   const from=CURRENT_SCREEN;
   if(name==='list' && from==='detail') FOCUS_CARD=DETAIL;   // back to the same wish
   CURRENT_SCREEN=name;
+  // Parent hides its floating tab bar on the Wishes form so it cannot cover the form actions.
+  try{ window.parent.postMessage({type:'wishes-screen',screen:name},'*'); }catch(e){}
   const next=document.getElementById('s-'+name), prev=from?document.getElementById('s-'+from):null;
   if(prev && prev!==next && !opt.noSlide) slideScreens(prev,next,SCREEN_ORDER[name]>SCREEN_ORDER[from]);
   else { document.querySelectorAll('.scr').forEach(sc=>{ if(sc!==next) sc.classList.remove('on'); }); next.classList.add('on'); }
@@ -3228,19 +3230,38 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   syncCatcher();
   var _show=show;
   show=function(name){ _show(name); sync(name); };
+
+  // Wishes form has its own bottom actions; hide the global tab bar while that form is open.
+  window.addEventListener('message',function(e){
+    var frame=document.getElementById('fr-wishes');
+    if(!frame || e.source!==frame.contentWindow || !e.data || e.data.type!=='wishes-screen') return;
+    var nav=document.getElementById('navwrap');
+    if(CURRENT!=='wishes') return;
+    if(e.data.screen==='form') nav.classList.remove('on');
+    else if(CURRENT in TABIDX) renderNav();
+  });
 })();
 </script>
 <script>
-/* FIT: scale the 390x844 screen down to the visible area (never up); skipped while a tab's keyboard is open */
+/* FIT: on phones, fit the complete 390x844 composition to the exact viewport.
+   Desktop keeps the original centered preview size. Skip while an iframe input is focused. */
 (function(){
   var scr=document.getElementById('app');
   function fit(){
-    var a=document.activeElement; if(a&&a.tagName==='IFRAME') return;
-    var s=Math.min(1,window.innerWidth/390,window.innerHeight/844);
-    scr.style.transform=s>=0.999?'':'scale('+s.toFixed(4)+')';
+    var a=document.activeElement;
+    if(a&&a.tagName==='IFRAME') return;
+    var vw=window.innerWidth, vh=window.innerHeight;
+    if(vw<=600){
+      var sx=vw/390, sy=vh/844;
+      scr.style.transform='scale('+sx.toFixed(5)+','+sy.toFixed(5)+')';
+    }else{
+      var s=Math.min(1,vw/390,vh/844);
+      scr.style.transform=s>=0.999?'':'scale('+s.toFixed(5)+')';
+    }
   }
   window.addEventListener('resize',fit);
   window.addEventListener('orientationchange',function(){setTimeout(fit,250);});
+  if(window.visualViewport) window.visualViewport.addEventListener('resize',fit);
   fit();
 })();
 </script>
