@@ -3231,16 +3231,66 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
 })();
 </script>
 <script>
-/* FIT: scale the 390x844 screen down to the visible area (never up); skipped while a tab's keyboard is open */
+/* FIT: scale the 390x844 screen down to the visible area (never up), measured with visualViewport;
+   the bars beside it take the colours of the page edge so it looks full-bleed */
 (function(){
-  var scr=document.getElementById('app');
+  var scr=document.getElementById('app'), vv=window.visualViewport, last='';
+  var RGBA=/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/;
+  function colorIn(doc,x,y,depth){
+    var els=doc.elementsFromPoint(x,y);
+    for(var i=0;i<els.length;i++){
+      var el=els[i];
+      if(el===doc.documentElement||el===doc.body) continue;
+      if(el.tagName==='IFRAME'&&depth<2){
+        try{
+          var d=el.contentDocument, r=el.getBoundingClientRect();
+          if(d){ var c=colorIn(d,(x-r.left)*390/r.width,(y-r.top)*844/r.height,depth+1); if(c) return c; }
+        }catch(e){}
+        continue;
+      }
+      var m=RGBA.exec(getComputedStyle(el).backgroundColor);
+      if(m&&(m[4]===undefined||parseFloat(m[4])>0.5)) return 'rgb('+m[1]+','+m[2]+','+m[3]+')';
+    }
+    return null;
+  }
+  function bgAt(y,ap,s){ return colorIn(document,ap.left+2*s,ap.top+y*s,0)||'#666'; }
+  function tint(){
+    var ap=scr.getBoundingClientRect(), s=ap.width/390;
+    if(s>=0.999){ if(last){ document.body.style.background=''; last=''; } return; }
+    var c0=bgAt(1,ap,s), prev=c0, py=1, cols=[c0], pos=[], y, k;
+    for(y=43;y<=886;y+=42){
+      var yy=Math.min(y,843), c=bgAt(yy,ap,s);
+      if(c!==prev){
+        var lo=py, hi=yy;
+        for(k=0;k<6;k++){ var mid=(lo+hi)/2; if(bgAt(mid,ap,s)===prev) lo=mid; else hi=mid; }
+        cols.push(c); pos.push(ap.top+hi*s); prev=c;
+      }
+      py=yy; if(yy===843) break;
+    }
+    var bg;
+    if(cols.length===1) bg=cols[0];
+    else{
+      var parts=[];
+      for(k=0;k<cols.length;k++){
+        var a=k===0?'0px':pos[k-1].toFixed(1)+'px', b=k===cols.length-1?'100%':pos[k].toFixed(1)+'px';
+        parts.push(cols[k]+' '+a, cols[k]+' '+b);
+      }
+      bg='linear-gradient(to bottom,'+parts.join(',')+')';
+    }
+    if(bg!==last){ document.body.style.background=bg; last=bg; }
+  }
   function fit(){
-    var a=document.activeElement; if(a&&a.tagName==='IFRAME') return;
-    var s=Math.min(1,window.innerWidth/390,window.innerHeight/844);
+    var a=document.activeElement; if(a&&a.tagName==='IFRAME') return;   // keyboard open in a tab: keep size
+    var w=vv?vv.width:window.innerWidth, h=vv?vv.height:window.innerHeight;
+    if(vv&&vv.scale>1.01) return;                                       // pinch-zoomed: keep size
+    var s=Math.min(1,w/390,h/844);
     scr.style.transform=s>=0.999?'':'scale('+s.toFixed(4)+')';
+    tint();
   }
   window.addEventListener('resize',fit);
   window.addEventListener('orientationchange',function(){setTimeout(fit,250);});
+  if(vv) vv.addEventListener('resize',fit);
+  setInterval(function(){ if(!document.hidden) tint(); },250);
   fit();
 })();
 </script>
