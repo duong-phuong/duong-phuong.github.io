@@ -18,18 +18,18 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* COVER */
 #v-cover{background:var(--gray)}
-.cover-head{position:absolute;left:0;top:0;width:100%;height:49px;background:var(--card)}
-.lang{position:absolute;left:299.598px;top:16px;width:61.704px;height:17.207px}
+.cover-head{position:absolute;left:0;top:0;width:100%;height:117.6px;background:var(--card)}
+.lang{position:absolute;left:299.598px;top:67.085px;width:61.704px;height:17.207px}
 .lang svg{display:block}
 .lang [data-lang]{cursor:pointer}
 .lt{font-family:var(--mono);font-weight:500;font-kerning:none;white-space:pre}
-.hero{position:absolute;left:0;right:0;top:49px;bottom:0;background:var(--gray)}
+.hero{position:absolute;left:0;right:0;top:117.6px;bottom:0;background:var(--gray)}
 .title{position:absolute;left:0;right:0;top:152px;text-align:center;font-weight:560;font-size:62px;line-height:67px;letter-spacing:-1px;color:var(--cream)}
-.eyebrow{position:absolute;left:0;right:0;bottom:209.3px;text-align:center;font-size:12.5px;line-height:16px;font-weight:600;letter-spacing:.2px;text-transform:uppercase}
-.date{position:absolute;left:0;right:0;bottom:162px;text-align:center;font-size:42px;line-height:44px;font-weight:750}
-.venue{position:absolute;left:0;right:0;bottom:128px;text-align:center;font-size:17px;line-height:24px;font-weight:500}
-.address{position:absolute;left:0;right:0;bottom:110.1px;text-align:center;font-size:13px;line-height:20px;font-weight:550}
-.cta{position:absolute;left:88.4px;bottom:45.8px;width:212.4px;height:34.8px;border-radius:999px;background:var(--yellow);color:var(--ink);font-size:15px;font-weight:700;line-height:1;white-space:nowrap}
+.eyebrow{position:absolute;left:0;right:0;top:618.7px;text-align:center;font-size:12.5px;line-height:16px;font-weight:600;letter-spacing:.2px;text-transform:uppercase}
+.date{position:absolute;left:0;right:0;top:638px;text-align:center;font-size:42px;line-height:44px;font-weight:750}
+.venue{position:absolute;left:0;right:0;top:692px;text-align:center;font-size:17px;line-height:24px;font-weight:500}
+.address{position:absolute;left:0;right:0;top:713.9px;text-align:center;font-size:13px;line-height:20px;font-weight:550}
+.cta{position:absolute;left:88.4px;top:763.4px;width:212.4px;height:34.8px;border-radius:999px;background:var(--yellow);color:var(--ink);font-size:15px;font-weight:700;line-height:1;white-space:nowrap}
 
 #burst{position:absolute;left:0;top:0;width:0;height:0;border-radius:50%;background:#F6E600;z-index:15;display:none;pointer-events:none}
 /* names revealed on the yellow (Cover -> Home) */
@@ -50,14 +50,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #v-home .i6{font-family:var(--sans);font-weight:600}
 #v-home [data-lang]{cursor:pointer}
 @keyframes hcaret{50%{opacity:0}}
-#hcar{position:absolute;z-index:1;left:0;top:283.792px;width:390px;height:394.457px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+#hcar{position:absolute;left:0;top:283.792px;width:390px;height:394.457px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
 #hcar.drag{cursor:grabbing}
 #v-home.hgate #homeSvg,#v-home.hgate #hcar{pointer-events:none}   /* Home content fades in while the Home pill opens (opacity set from JS) */
 #hcar .hc{position:absolute;left:0;top:0;width:289.829px;overflow:hidden;background-size:cover;background-position:center;will-change:transform,filter;pointer-events:none}
 
 /* QUIZ */
 #v-quiz{background:var(--card);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:130px}
-#qhead{position:sticky;top:0;z-index:5;height:49px;background:var(--yellow)}
+#qhead{position:sticky;top:0;z-index:5;height:126.99px;background:var(--yellow)}
 #qhead svg,#cards svg{display:block}
 .qc{display:block;overflow:visible}
 .qc .chip{fill:none;stroke:#121212;stroke-width:.66;cursor:pointer}
@@ -98,17 +98,12 @@ g.pb{transform-box:fill-box;transform-origin:center}
 g.pb.pop{animation:pbpop .3s ease-out}
 
 /* NAV overlay */
-#navwrap{position:absolute;left:0;top:auto;bottom:0;width:390px;height:844px;pointer-events:none;z-index:20;display:none}
+#navwrap{position:absolute;left:0;top:0;width:390px;height:844px;pointer-events:none;z-index:20;display:none}
 #navwrap.on{display:block}
 #navwrap svg{position:absolute;left:0;top:0}
 #navwrap .hit{pointer-events:all;cursor:pointer;fill:transparent}
 </style>
 <style>#frames iframe{position:absolute;left:0;top:0;width:390px;height:844px;border:0;display:none}</style>
-<style>
-/* LOCK + FIT: page is locked, the 390x844 screen is scaled to the visible area (JS at the end); only #v-quiz scrolls inside itself */
-html,body{position:fixed;top:var(--vt,0px);left:var(--vl,0px);width:var(--vw,100%);height:var(--vh,100dvh);overflow:hidden;overscroll-behavior:none;touch-action:pan-x pan-y}
-.screen{position:absolute;left:50%;top:50%;margin:-422px 0 0 -195px;max-width:none;flex:none;transform-origin:50% 50%}
-</style>
 </head>
 <body>
 <main class="screen" id="app">
@@ -532,7 +527,7 @@ function renderHome(animate){
   const vn=LANG==="vi", heartX=28.166+h.sub.length*7.7543+6.912, capX=194.765-h.cap.length*6.4804/2;
   const para=h.p.map((l,i)=>`<text class="m4" x="26.798" y="${[186.344,203.779,221.214,238.649][i]}" font-size="14.2444" letter-spacing="-0.2849" fill="#666" id="hp${i}">${animate?"":esc(l)}</text>`).join("");
   document.getElementById("homeSvg").innerHTML=`<svg width="390" height="844" viewBox="0 0 390 844" role="img" aria-label="Dương và Phương">
-<g transform="translate(299.598 16)">${langToggleInner(vn)}</g>
+<g transform="translate(299.598 67.085)">${langToggleInner(vn)}</g>
 <text class="m5" x="28.166" y="106.66" font-size="13.7012" letter-spacing="-0.274" fill="#666">${esc(h.sub)}</text>
 <path transform="translate(${heartX.toFixed(3)} 98.806)" d="${HOME_HEART}" fill="#F43C1E"/>
 <text class="i7" x="26.798" y="152.267" font-size="40.0944" letter-spacing="-1.6038" fill="#333">Dương <tspan class="i6" font-size="23.7724" letter-spacing="-0.9509">${h.and}</tspan> Phương</text>
@@ -613,20 +608,19 @@ function hcInit(){
     if(HOME_PHOTOS.length) el.style.backgroundImage=`url("${HOME_PHOTOS[i]}")`; else el.style.background=HOME_PH[i%HOME_PH.length];
     box.appendChild(el); HC.els.push(el);
   }
-  const hcSc=()=>document.getElementById("app").getBoundingClientRect().width/390||1;
   let d=null;
   box.addEventListener("pointerdown",e=>{ cancelAnimationFrame(HC.raf); d={x:e.clientX,p:HC.pos,s:[[e.timeStamp,e.clientX]],m:0}; box.setPointerCapture(e.pointerId); box.classList.add("drag"); });
   box.addEventListener("pointermove",e=>{
-    if(!d) return; const dx0=e.clientX-d.x, dx=dx0/hcSc(); d.m=Math.max(d.m,Math.abs(dx0));
+    if(!d) return; const dx=e.clientX-d.x; d.m=Math.max(d.m,Math.abs(dx));
     HC.pos=d.p-dx/HC_G.step; d.s.push([e.timeStamp,e.clientX]); if(d.s.length>6) d.s.shift(); hcLayout();
   });
   const end=e=>{
     if(!d) return; box.classList.remove("drag");
     const a=d.s[0], b=d.s[d.s.length-1], dt=Math.max(16,b[0]-a[0]);
-    let v=-(b[1]-a[1])/hcSc()/dt*1000/HC_G.step; v=Math.max(-9,Math.min(9,v));
+    let v=-(b[1]-a[1])/dt*1000/HC_G.step; v=Math.max(-9,Math.min(9,v));
     const base=Math.round(d.p); let target;
     if(d.m<6){   // tap: the photo behind steps forward
-      const x=(e.clientX-box.getBoundingClientRect().left)/hcSc();
+      const x=e.clientX-box.getBoundingClientRect().left;
       target=x<HC_G.cx?base-1:(x>HC_G.cx+289.829?base+1:base); v=0;
     } else target=Math.max(base-2,Math.min(base+2,Math.round(HC.pos+v*0.22)));
     d=null; hcAnim(target,v);
@@ -695,7 +689,7 @@ function finishFlow(){
   if(FINISHING) return; FINISHING=true; BURSTING=true;   // BURSTING also blocks taps on the tab bar meanwhile
   const NS="http://www.w3.org/2000/svg", app=document.getElementById("app"), ap=app.getBoundingClientRect();
   const btn=document.getElementById("finishBtn"), r=btn.getBoundingClientRect();
-  const sc=ap.width/390||1, w=r.width/sc, h=r.height/sc, tx=(r.left-ap.left)/sc+w/2, ty=(r.top-ap.top)/sc+h/2, base=(r.top-ap.top)/sc;
+  const w=r.width, h=r.height, tx=r.left-ap.left+w/2, ty=r.top-ap.top+h/2, base=r.top-ap.top;
   const quiz=document.getElementById("v-quiz"), res=document.getElementById("v-result"), nav=document.getElementById("navwrap");
   const D=44, G=zeroGlyph(), cxT=G?G.cx:RES.cx, cyT=G?G.cy:resBase()-0.7275*62.4;   // ball size, centre of the score number (measured from the font)
   const RMAX=Math.hypot(Math.max(tx,390-tx),Math.max(ty,844-ty))+10;   // radius that covers the whole screen from the ball
@@ -759,7 +753,7 @@ function scrollInertia(el,to,dur,done){   // fast start, long soft stop
 }
 function finishRise(){   // the ticket comes up from behind the tab bar with a springy overshoot
   const f=document.getElementById("finish"), r=document.getElementById("finishBtn").getBoundingClientRect();
-  let y=781.82-((r.top-document.getElementById("app").getBoundingClientRect().top)+r.height/2)/(document.getElementById("app").getBoundingClientRect().width/390||1), v=0, t0=performance.now(); const w=11, z=0.6;
+  let y=781.82-(r.top+r.height/2), v=0, t0=performance.now(); const w=11, z=0.6;
   f.style.transform=`translateY(${y.toFixed(2)}px)`; f.classList.add("ready");
   (function loop(now){
     const dt=Math.min(0.032,(now-t0)/1000); t0=now;
@@ -801,7 +795,7 @@ function stepSVG(){
   return g;
 }
 function renderHeader(){
-  document.getElementById("qhead").innerHTML=`<svg width="390" height="49" viewBox="0 78 390 49">${stepSVG()}</svg>`;
+  document.getElementById("qhead").innerHTML=`<svg width="390" height="126.99" viewBox="0 0 390 126.99">${stepSVG()}</svg>`;
 }
 function cardSVG(i){
   const st=S[i], q=QUESTIONS[ORDER[i]], focus=(i===FOCUS);
@@ -872,7 +866,7 @@ document.getElementById("qhead").addEventListener("click",e=>{
   const g=e.target.closest("[data-step]"); if(!g) return;
   const i=+g.dataset.step; FOCUS=i; renderQuiz();
   const card=document.querySelector(`[data-card="${i}"]`);
-  document.getElementById("v-quiz").scrollTo({top:card.offsetTop-49, behavior:"smooth"});
+  document.getElementById("v-quiz").scrollTo({top:card.offsetTop-126.99, behavior:"smooth"});
 });
 
 /* ============ RESULT ============ */
@@ -1129,7 +1123,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #v-home,#v-soon{background:var(--cream);color:var(--ink);display:none;align-items:center;justify-content:center;text-align:center;font-family:var(--mono);font-size:13px;line-height:20px;padding:0 40px}
 #v-home.on,#v-soon.on{display:flex}
 /* NAV overlay */
-#navwrap{position:absolute;left:0;top:auto;bottom:0;width:390px;height:844px;pointer-events:none;z-index:20;display:none}
+#navwrap{position:absolute;left:0;top:0;width:390px;height:844px;pointer-events:none;z-index:20;display:none}
 #navwrap.on{display:block}
 #navwrap svg{position:absolute;left:0;top:0}
 #navwrap .hit{pointer-events:all;cursor:pointer;fill:transparent}
@@ -1980,6 +1974,7 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('650 11.68px Inter'
 <script type="text/plain" id="src-wishes"><!DOCTYPE html>
 <html lang="vi">
 <head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"><\/script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Lời chúc · Wishes</title>
@@ -2013,8 +2008,7 @@ body{background:#d9d9d9;display:flex;justify-content:center;-webkit-font-smoothi
 .fld{position:absolute;border:0;background:transparent;outline:none;font-family:"Cascadia Code","Cascadia Mono",monospace;color:#000;resize:none}
 .fld::placeholder{color:#CCCCCC}
 #nameIn{left:43.87px;top:226px;width:280px;height:24px;font-size:13.16px}
-#msgIn{left:43.87px;top:474px;width:306px;height:226px;font-size:13.16px;line-height:20.3px;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-#msgIn::-webkit-scrollbar{display:none}
+#msgIn{left:43.87px;top:474px;width:306px;height:226px;font-size:13.16px;line-height:20.3px}
 #fileIn{display:none}
 .press{transform-box:fill-box;transform-origin:center;cursor:pointer}
 .scr.anim{transition:transform .38s cubic-bezier(.32,.72,0,1)}
@@ -2959,6 +2953,8 @@ const fxOut=p=>1-Math.pow(1-p,3);
 const fxIn=p=>p*p;
 function startSubmitFx(){
   if(!document.getElementById('msgIn').value.trim()) return;          // nothing to send: nothing happens
+  if(!sb){ alert('Chưa kết nối được máy chủ lời chúc. Vui lòng kiểm tra mạng và thử lại.'); return; }
+  SEND_P=sendFromForm();
   const f=fxLayer();
   const q=s=>f.querySelector(s);
   // the form's own buttons are replaced by the animation
@@ -3004,13 +3000,15 @@ function startSubmitFx(){
     }
     // the cream circle now covers the screen: the success page is shown and the animation is removed
     q('#fxY').setAttribute('r',FX_RF); q('#fxCr').setAttribute('r',FX_RF);
-    submitWish();
+    Promise.resolve(SEND_P).then(ok=>{
     f.style.visibility='hidden';
     q('#fxH').setAttribute('fill','#F6E600');
     oldHide.forEach(e=>{ if(e) e.style.opacity=''; });
     q('#fxY').setAttribute('r',0); q('#fxCr').setAttribute('r',0);
     q('#fxTH').removeAttribute('opacity'); q('#fxTG').removeAttribute('opacity');
-    doneButtonRise();
+    if(ok){ submitWish(); doneButtonRise(); }
+    else { alert('Chưa gửi được lời chúc. Vui lòng kiểm tra mạng và thử lại.'); }
+    });
   };
   requestAnimationFrame(frame);
 }
@@ -3026,20 +3024,56 @@ function doneButtonRise(){
     if(Math.abs(y)>0.05||Math.abs(v)>0.05) requestAnimationFrame(f); else mv.setAttribute('transform','translate(0 0)');
   })(last);
 }
-function submitWish(){
-  const msg=document.getElementById('msgIn').value.trim(); if(!msg) return;
+/* ---------- Supabase: approved wishes are read; a new wish and its photo are sent for approval ---------- */
+const SB_URL="https://ldqwjsiienhwbtlmmfbm.supabase.co", SB_KEY="sb_publishable_sPT36MmZYsnfP8YrBapEpQ_mrw3uEui";
+const sb=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SB_URL,SB_KEY):null;
+let SEND_P=null;
+function photoUrl(p){ return p?sb.storage.from("wish-photos").getPublicUrl(p).data.publicUrl:null; }
+function loadWishes(){
+  if(!sb) return Promise.resolve();
+  const q=sb.from("wishes").select("name,date,msg,photo_path,iw,ih,crop").eq("status","visible").order("created_at",{ascending:false})
+    .then(({data,error})=>{ if(!error&&data&&data.length){
+      WISHES=data.map(r=>({name:r.name,date:r.date,msg:r.msg,photo:photoUrl(r.photo_path),iw:r.iw,ih:r.ih,crop:r.crop}));
+      LIST_DIRTY=true; DETAIL_DIRTY=true; } })
+    .catch(()=>{});
+  return Promise.race([q,new Promise(r=>setTimeout(r,2500))]);   // at most 2.5s: the list shows anyway
+}
+function shrinkPhoto(dataUrl){
+  return new Promise((res,rej)=>{ const im=new Image();
+    im.onload=()=>{ const k=Math.min(1,1200/Math.max(im.naturalWidth,im.naturalHeight));
+      const w=Math.round(im.naturalWidth*k), h=Math.round(im.naturalHeight*k);
+      const c=document.createElement("canvas"); c.width=w; c.height=h; c.getContext("2d").drawImage(im,0,0,w,h);
+      c.toBlob(b=>b?res({blob:b,w,h}):rej(new Error("photo")),"image/jpeg",0.85); };
+    im.onerror=()=>rej(new Error("photo")); im.src=dataUrl; });
+}
+async function sendWish(name,date,msg,photo,iw,ih,crop){
+  let photo_path=null, W=iw, H=ih;
+  if(photo){
+    const c=await shrinkPhoto(photo); W=c.w; H=c.h;
+    photo_path=crypto.randomUUID()+".jpg";
+    const up=await sb.storage.from("wish-photos").upload(photo_path,c.blob,{contentType:"image/jpeg"});
+    if(up.error) throw up.error;
+  }
+  const ins=await sb.from("wishes").insert({name,date,msg,photo_path,iw:W,ih:H,crop});
+  if(ins.error) throw ins.error;
+}
+function sendFromForm(){
+  const msg=document.getElementById('msgIn').value.trim(); if(!msg||!sb) return Promise.resolve(false);
   const name=document.getElementById('nameIn').value.trim()||'Người thân';
   const d=new Date(), date=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
-  WISHES.push({name,date,msg,photo:PHOTO,iw:PHOTO_IW,ih:PHOTO_IH,crop:CROP_FORM?{...CROP_FORM}:null});
-  FOCUS_CARD=WISHES.length-1; LIST_DIRTY=true; DETAIL_DIRTY=true;
+  return sendWish(name,date,msg,PHOTO,PHOTO_IW,PHOTO_IH,CROP_FORM?{...CROP_FORM}:null).then(()=>true,()=>false);
+}
+function submitWish(){
+  // the wish is sent when the animation starts (SEND_P); it is shown after the owners approve it
   show('done',undefined,{noSlide:true});
 }
+
 window.WishesApp={ open(s,arg){ show(s,arg); } };
 requestAnimationFrame(carFrame);
 buildPreview();
 fillXIcons();
 const FONTS_NEEDED=['700 32px Inter','600 12.49px Inter','400 14px Inter','400 15.48px Inter','500 12.49px Inter'];
-Promise.all(FONTS_NEEDED.map(f=>document.fonts?document.fonts.load(f):Promise.resolve())).then(()=>{ buildDetailSlides(); show('list'); },()=>{ buildDetailSlides(); show('list'); });
+Promise.all([loadWishes(),...FONTS_NEEDED.map(f=>document.fonts?document.fonts.load(f):Promise.resolve())]).then(()=>{ buildDetailSlides(); show('list'); },()=>{ buildDetailSlides(); show('list'); });
 <\/script>
 </body>
 </html>
@@ -3221,83 +3255,13 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
      tab page inside the frame. A transparent strip over the icons passes those taps to the page. */
   var nav=document.getElementById('navwrap');
   var catcher=document.createElement('div');
-  catcher.style.cssText='position:absolute;left:0;top:auto;bottom:29px;width:390px;height:70px;z-index:19;background:transparent;display:none';
+  catcher.style.cssText='position:absolute;left:0;top:745px;width:390px;height:70px;z-index:19;background:transparent;display:none';
   nav.parentNode.insertBefore(catcher,nav);
   function syncCatcher(){ catcher.style.display=nav.classList.contains('on')?'block':'none'; }
   new MutationObserver(syncCatcher).observe(nav,{attributes:true,attributeFilter:['class']});
   syncCatcher();
   var _show=show;
   show=function(name){ _show(name); sync(name); };
-})();
-</script>
-<script>
-/* FIT: scale the 390x844 screen down to the visible area (never up), measured with visualViewport;
-   the bars beside it take the colours of the page edge so it looks full-bleed */
-(function(){
-  var scr=document.getElementById('app'), vv=window.visualViewport, last='';
-  var RGBA=/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/;
-  function colorIn(doc,x,y,depth){
-    var els=doc.elementsFromPoint(x,y);
-    for(var i=0;i<els.length;i++){
-      var el=els[i];
-      if(el===doc.documentElement||el===doc.body) continue;
-      if(el.tagName==='IFRAME'&&depth<2){
-        try{
-          var d=el.contentDocument, r=el.getBoundingClientRect();
-          if(d){ var c=colorIn(d,(x-r.left)*390/r.width,(y-r.top)*844/r.height,depth+1); if(c) return c; }
-        }catch(e){}
-        continue;
-      }
-      var m=RGBA.exec(getComputedStyle(el).backgroundColor);
-      if(m&&(m[4]===undefined||parseFloat(m[4])>0.5)) return 'rgb('+m[1]+','+m[2]+','+m[3]+')';
-    }
-    return null;
-  }
-  function bgAt(y,ap,s){ return colorIn(document,ap.left+2*s,ap.top+y*s,0)||'#666'; }
-  function tint(){
-    var ap=scr.getBoundingClientRect(), s=ap.width/390;
-    if(s>=0.999){ if(last){ document.body.style.background=''; last=''; } return; }
-    var c0=bgAt(1,ap,s), prev=c0, py=1, cols=[c0], pos=[], y, k;
-    for(y=43;y<=886;y+=42){
-      var yy=Math.min(y,843), c=bgAt(yy,ap,s);
-      if(c!==prev){
-        var lo=py, hi=yy;
-        for(k=0;k<6;k++){ var mid=(lo+hi)/2; if(bgAt(mid,ap,s)===prev) lo=mid; else hi=mid; }
-        cols.push(c); pos.push(ap.top+hi*s); prev=c;
-      }
-      py=yy; if(yy===843) break;
-    }
-    var bg;
-    if(cols.length===1) bg=cols[0];
-    else{
-      var parts=[];
-      for(k=0;k<cols.length;k++){
-        var a=k===0?'0px':pos[k-1].toFixed(1)+'px', b=k===cols.length-1?'100%':pos[k].toFixed(1)+'px';
-        parts.push(cols[k]+' '+a, cols[k]+' '+b);
-      }
-      bg='linear-gradient(to bottom,'+parts.join(',')+')';
-    }
-    if(bg!==last){ document.body.style.background=bg; last=bg; }
-  }
-  function fit(){
-    var a=document.activeElement; if(a&&a.tagName==='IFRAME') return;   // keyboard open in a tab: keep size
-    var w=vv?vv.width:window.innerWidth, h=vv?vv.height:window.innerHeight;
-    if(vv&&vv.scale>1.01) return;                                       // pinch-zoomed: keep size
-    var rs=document.documentElement.style;
-    rs.setProperty('--vw',w+'px'); rs.setProperty('--vh',h+'px');
-    rs.setProperty('--vt',(vv?vv.offsetTop:0)+'px'); rs.setProperty('--vl',(vv?vv.offsetLeft:0)+'px');
-    var s=Math.min(1,w/390);
-    scr.style.height=(h/s).toFixed(1)+'px';
-    scr.style.top='0px'; scr.style.margin='0px';
-    scr.style.left='0px'; scr.style.transformOrigin='0 0';
-    scr.style.transform='translate('+((w-390*s)/2).toFixed(2)+'px,0) scale('+s.toFixed(4)+')';
-    tint();
-  }
-  window.addEventListener('resize',fit);
-  window.addEventListener('orientationchange',function(){setTimeout(fit,250);});
-  if(vv){ vv.addEventListener('resize',fit); vv.addEventListener('scroll',fit); }
-  setInterval(function(){ if(!document.hidden) tint(); },250);
-  fit();
 })();
 </script>
 </body>
