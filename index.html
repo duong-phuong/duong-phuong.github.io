@@ -57,7 +57,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* QUIZ */
 #v-quiz{background:var(--card);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:130px}
-#qhead{position:sticky;top:0;z-index:5;height:126.99px;background:var(--yellow)}
+#qhead{position:sticky;top:0;z-index:5;height:88.89px;background:var(--yellow)}
 #qhead svg,#cards svg{display:block}
 .qc{display:block;overflow:visible}
 .qc .chip{fill:none;stroke:#121212;stroke-width:.66;cursor:pointer}
@@ -795,7 +795,7 @@ function stepSVG(){
   return g;
 }
 function renderHeader(){
-  document.getElementById("qhead").innerHTML=`<svg width="390" height="126.99" viewBox="0 0 390 126.99">${stepSVG()}</svg>`;
+  document.getElementById("qhead").innerHTML=`<svg width="390" height="88.89" viewBox="0 0 390 88.89"><g transform="translate(0,-26.04)">${stepSVG()}</g></svg>`;
 }
 function cardSVG(i){
   const st=S[i], q=QUESTIONS[ORDER[i]], focus=(i===FOCUS);
@@ -866,7 +866,7 @@ document.getElementById("qhead").addEventListener("click",e=>{
   const g=e.target.closest("[data-step]"); if(!g) return;
   const i=+g.dataset.step; FOCUS=i; renderQuiz();
   const card=document.querySelector(`[data-card="${i}"]`);
-  document.getElementById("v-quiz").scrollTo({top:card.offsetTop-126.99, behavior:"smooth"});
+  document.getElementById("v-quiz").scrollTo({top:card.offsetTop-88.89, behavior:"smooth"});
 });
 
 /* ============ RESULT ============ */
@@ -2006,7 +2006,7 @@ body{background:#d9d9d9;display:flex;justify-content:center;-webkit-font-smoothi
 .gw svg{display:block;flex:0 0 auto;overflow:visible}
 /* form fields (HTML inputs laid over the vector fields) */
 .fld{position:absolute;border:0;background:transparent;outline:none;font-family:"Cascadia Code","Cascadia Mono",monospace;color:#000;resize:none}
-.fld::placeholder{color:#CCCCCC}
+.fld::placeholder{color:#CCCCCC;font-family:"Cascadia Code","Cascadia Mono",monospace;font-size:inherit}
 #nameIn{left:43.87px;top:226px;width:280px;height:24px;font-size:13.16px}
 #msgIn{left:43.87px;top:474px;width:306px;height:226px;font-size:13.16px;line-height:20.3px}
 #fileIn{display:none}
@@ -3260,12 +3260,16 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   function syncCatcher(){ catcher.style.display=nav.classList.contains('on')?'block':'none'; }
   new MutationObserver(syncCatcher).observe(nav,{attributes:true,attributeFilter:['class']});
   syncCatcher();
+  var sty=document.createElement('style');
+  sty.textContent='#navwrap{z-index:1000!important;will-change:translate}#navShadow{display:none!important}';
+  document.head.appendChild(sty);
+  catcher.style.zIndex='999';
   /* Safari's bottom toolbar covers the page: the tab bar moves up so it sits just above the visible area,
      and follows the toolbar when it shows or hides. It never moves below its place. */
   var vv=window.visualViewport, shift=0;
   function placeNav(){
     if(!vv) return;
-    var visibleBottom=vv.offsetTop+vv.height;
+    var visibleBottom=vv.offsetTop+vv.height-17;
     var natural=nav.getBoundingClientRect().bottom-shift;
     shift=Math.min(0, visibleBottom-natural);
     var t='0 '+shift.toFixed(2)+'px';
@@ -3274,6 +3278,18 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   if(vv){ vv.addEventListener('resize',placeNav); vv.addEventListener('scroll',placeNav); }
   window.addEventListener('resize',placeNav);
   placeNav();
+  function subScreenOpen(){
+    try{
+      if(CURRENT==='wishes'){ var fw=document.getElementById('fr-wishes'); return !!fw && fw.contentWindow.eval('CURRENT_SCREEN')!=='list'; }
+      if(CURRENT==='wedding'){ var fd=document.getElementById('fr-wedding'); return !!fd && !!fd.contentDocument && !!fd.contentDocument.querySelector('.wd-full'); }
+    }catch(e){}
+    return false;
+  }
+  setInterval(function(){
+    var hide=subScreenOpen();
+    nav.style.visibility=hide?'hidden':'';
+    catcher.style.visibility=hide?'hidden':'';
+  },200);
   var _show=show;
   show=function(name){ _show(name); sync(name); };
 })();
