@@ -106,7 +106,7 @@ g.pb.pop{animation:pbpop .3s ease-out}
 <style>#frames iframe{position:absolute;left:0;top:0;width:390px;height:844px;border:0;display:none}</style>
 <style>
 /* LOCK + FIT: page is locked, the 390x844 screen is scaled to the visible area (JS at the end); only #v-quiz scrolls inside itself */
-html,body{position:fixed;inset:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:pan-x pan-y}
+html,body{position:fixed;top:var(--vt,0px);left:var(--vl,0px);width:var(--vw,100%);height:var(--vh,100dvh);overflow:hidden;overscroll-behavior:none;touch-action:pan-x pan-y}
 .screen{position:absolute;left:50%;top:50%;margin:-422px 0 0 -195px;max-width:none;flex:none;transform-origin:50% 50%}
 </style>
 </head>
@@ -3283,13 +3283,16 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
     var a=document.activeElement; if(a&&a.tagName==='IFRAME') return;   // keyboard open in a tab: keep size
     var w=vv?vv.width:window.innerWidth, h=vv?vv.height:window.innerHeight;
     if(vv&&vv.scale>1.01) return;                                       // pinch-zoomed: keep size
+    var rs=document.documentElement.style;
+    rs.setProperty('--vw',w+'px'); rs.setProperty('--vh',h+'px');
+    rs.setProperty('--vt',(vv?vv.offsetTop:0)+'px'); rs.setProperty('--vl',(vv?vv.offsetLeft:0)+'px');
     var s=Math.min(1,w/390,h/844);
     scr.style.transform=s>=0.999?'':'scale('+s.toFixed(4)+')';
     tint();
   }
   window.addEventListener('resize',fit);
   window.addEventListener('orientationchange',function(){setTimeout(fit,250);});
-  if(vv) vv.addEventListener('resize',fit);
+  if(vv){ vv.addEventListener('resize',fit); vv.addEventListener('scroll',fit); }
   setInterval(function(){ if(!document.hidden) tint(); },250);
   fit();
 })();
