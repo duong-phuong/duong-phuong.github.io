@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#22324B" id="safariThemeColor">
 <title>Dương & Phương · Wedding</title>
 <style>
 @font-face{font-family:"Inter";src:url("fonts/Inter-VariableFont_slnt_wght.woff") format("woff");font-weight:100 900;font-display:swap}
@@ -12,7 +13,15 @@
 html,body{height:100%}
 body{background:#d9d9d9;font-family:var(--sans);display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+/* Safari shell: edge-to-edge background is enabled only on the non-scrolling Cover and Home.
+   The inner 390x844 artboard is deliberately preserved so existing artwork/layout does not shift. */
+body.safari-shell{min-height:100vh;min-height:100dvh;overscroll-behavior:none}
+body.safari-cover{background:#22324B}
+body.safari-home{background:#FFFEF9}
+body.safari-shell #app{flex-shrink:0}
 .screen{position:relative;width:390px;max-width:100vw;height:844px;overflow:hidden;background:var(--gray);color:var(--cream)}
+.screen.safari-cover{background:#22324B}
+.screen.safari-home{background:#FFFEF9}
 .view{position:absolute;inset:0;display:none}
 .view.on{display:block}
 
@@ -492,6 +501,19 @@ function renderNav(){
 
 function show(name){
   CURRENT=name;
+  const app=document.getElementById("app");
+  const isSafariShell=(name==="cover"||name==="home");
+  document.body.classList.toggle("safari-shell",isSafariShell);
+  document.body.classList.toggle("safari-cover",name==="cover");
+  document.body.classList.toggle("safari-home",name==="home");
+  app.classList.toggle("safari-cover",name==="cover");
+  app.classList.toggle("safari-home",name==="home");
+  const safariTheme=document.getElementById("safariThemeColor");
+  if(safariTheme){
+    if(name==="cover") safariTheme.setAttribute("content","#22324B");
+    else if(name==="home") safariTheme.setAttribute("content","#FFFEF9");
+    else safariTheme.removeAttribute("content");
+  }
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("on"));
   const nav=document.getElementById("navwrap");
   if(name==="cover"){ document.getElementById("v-cover").classList.add("on"); nav.classList.remove("on"); navWasShown=false; return; }
