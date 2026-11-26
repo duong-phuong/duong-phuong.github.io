@@ -29,7 +29,7 @@ body.safari-shell #app{flex-shrink:0}
 .view.on{display:block}
 
 /* COVER (design 1__Trang_chinh-2.ai, 1 css px = 3 pt): bg -> title + loading bar -> Let's Explore -> push -> burst */
-#v-cover{background:transparent}
+#v-cover{background:transparent;transform:translateY(var(--cover-offset-y,0px))}
 #cvSvg{position:absolute;left:0;top:0;display:block;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 #cvSvg text{white-space:pre}
 #cvSvg .cvi{font-family:var(--sans)}
@@ -48,6 +48,9 @@ body.safari-shell #app{flex-shrink:0}
 /* no browser focus frame when the pill is clicked; keyboard users still get a clear marker */
 #cta,#cta:focus{outline:none}
 #cta:focus-visible #cvFill{stroke:#fff;stroke-width:1.5}
+#cvSvg.rdy #cvOutline{opacity:0}
+#cta,#cta *{-webkit-tap-highlight-color:transparent}
+#cta:active #cvFill{stroke:none}
 /* Cover and Home are non-scrolling screens */
 #v-cover,#cvSvg,#v-home{touch-action:none;overscroll-behavior:none}
 html:has(#v-cover.on),body:has(#v-cover.on),html:has(#v-home.on),body:has(#v-home.on){overflow:hidden;overscroll-behavior:none}
@@ -1101,6 +1104,7 @@ document.getElementById("v-result").addEventListener("click",e=>{
 })();
 
 // ---- Cover -> Home: yellow blooms out of the button, then shrinks around the Home tab ----
+let COVER_OFFSET_Y=0;
 const CTA_X=195, CTA_Y=401.6, BLOOM_R=520;   // centre of the new "Let's Explore!" pill (Cover design 1__Trang_chinh-2.ai); 520 > farthest corner (~483)
 const ease=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
 // Animate only the outer Safari/page surround; keep the browser toolbar tint fixed.
@@ -1151,7 +1155,7 @@ function hideNames(){   // mask reveal (slides up out of its mask) + fade out; r
 }
 function coverGo(){
   if(BURSTING) return; BURSTING=true;
-  const c={x:CTA_X,y:CTA_Y};
+  const c={x:CTA_X,y:CTA_Y+COVER_OFFSET_Y};
   // 1) yellow spreads over the whole page; the outer surround follows the same 700 ms bloom.
   tweenShellBackground("#22324B","#FFE600",700,ease);
   burstAnim({x:c.x,y:c.y,r:108},{x:c.x,y:c.y,r:BLOOM_R},700,()=>{
@@ -1202,6 +1206,15 @@ function coverGo(){
   const $=id=>document.getElementById(id), cover=$("v-cover"), svg=$("cvSvg"), cta=$("cta");
   const BAR_W=215.86, BAR_R=17.94, WORD="Loading";
   const E_SINE=p=>-(Math.cos(Math.PI*p)-1)/2, E_OUT=p=>1-Math.pow(1-p,3);
+  function syncCoverPosition(){
+    const mobile=window.matchMedia("(max-width:600px)").matches;
+    const vh=(window.visualViewport&&window.visualViewport.height)||window.innerHeight||844;
+    COVER_OFFSET_Y=(mobile&&vh<844)?(vh-844)/2:0;
+    cover.style.setProperty("--cover-offset-y",COVER_OFFSET_Y.toFixed(2)+"px");
+  }
+  syncCoverPosition();
+  window.addEventListener("resize",syncCoverPosition,{passive:true});
+  if(window.visualViewport){window.visualViewport.addEventListener("resize",syncCoverPosition,{passive:true});window.visualViewport.addEventListener("scroll",syncCoverPosition,{passive:true});}
   const OUT="cubic-bezier(.2,.8,.2,1)", SPRING="cubic-bezier(.34,1.56,.64,1)";
   let gen=0, timers=[], ready=false, typing=false, downT=0;
   const later=(fn,ms)=>{ const g=gen; timers.push(setTimeout(()=>{ if(g===gen) fn(); },ms)); };
@@ -1214,7 +1227,7 @@ function coverGo(){
   const soon=$("v-soon");
   function warmOn(){ soon.classList.add("warm"); try{ ["400 13px \"Cascadia Mono\"","500 13px \"Cascadia Mono\"","400 14px Inter","500 14px Inter","600 14px Inter","650 12px Inter","700 14px Inter"].forEach(f=>document.fonts&&document.fonts.load(f)); }catch(e){} }
   function warmOff(){ soon.classList.remove("warm"); }
-  function stop(){ warmOff(); gen++; timers.forEach(clearTimeout); timers=[]; ready=false; typing=false; svg.classList.remove("rdy");
+  function stop(){ warmOff(); gen++; timers.forEach(clearTimeout); timers=[]; ready=false; typing=false; svg.classList.remove("rdy"); $("cvOutline").style.opacity="";
     svg.getAnimations({subtree:true}).forEach(a=>a.cancel());
     $("cvRevRect").setAttribute("width",0); fillSet(0); $("cvLoad").textContent=""; $("cvPct").textContent="0%"; }
   function typeLoop(){   // "Loading" types in once, then stays still (only the % keeps running)
@@ -1222,12 +1235,12 @@ function coverGo(){
     (function step(){ if(!typing) return; $("cvLoad").textContent=WORD.slice(0,++n); if(n<WORD.length) later(step,90); })();
   }
   function finish(){
-    fillSet(BAR_W); $("cvPct").textContent="100%";
+    fillSet(BAR_W); $("cvPct").textContent="100%"; $("cvOutline").style.opacity="0";
     later(()=>{   // short hold on 100%, then the labels leave
       [$("cvLoad"),$("cvPct")].forEach(el=>an(el,[{opacity:1,transform:"translateY(0)"},{opacity:0,transform:"translateY(-6px)"}],{duration:260,easing:"ease-in"}));
       later(()=>{ typing=false;
         // the filled bar is the pill: text springs in, pill gives a small spring
-        an($("cvCtaTxt"),[{opacity:0,transform:"scale(.55) translateY(10px)"},{opacity:1,transform:"scale(1) translateY(0)"}],{duration:700,easing:SPRING});
+        an($("cvCtaTxt"),[{opacity:0,transform:"scale(.55)"},{opacity:1,transform:"scale(1)"}],{duration:700,easing:SPRING});
         an($("cvCtaIn"),[{transform:"scale(1)"},{transform:"scale(1.06)",offset:.35},{transform:"scale(1)"}],{duration:650,easing:"ease-out"});
         later(()=>{   // ARE GETTING MARRIED + date rise in
           const kf=[{opacity:0,transform:"translateY(18px)"},{opacity:1,transform:"translateY(0)"}];
@@ -1243,11 +1256,11 @@ function coverGo(){
     an($("cvBg"),[{opacity:0},{opacity:1}],{duration:600,easing:"ease-out"});          // 1) background colour first
     later(()=>{                                                                           // 2) title reveal + outline draws left -> right
       an($("cvTitle"),[{transform:"translateY(40px)"},{transform:"translateY(0)"}],{duration:800,easing:OUT});
-      tween(900,E_OUT,e=>$("cvRevRect").setAttribute("width",(e*(BAR_W+4)).toFixed(2)));
+      tween(600,E_OUT,e=>$("cvRevRect").setAttribute("width",(e*(BAR_W+4)).toFixed(2)));
       [$("cvLoad"),$("cvPct")].forEach(el=>an(el,[{opacity:0},{opacity:1}],{duration:300,delay:150}));
       later(typeLoop,250);
     },450);
-    later(()=>tween(3200,E_SINE,e=>{ fillSet(e*BAR_W); $("cvPct").textContent=Math.round(e*100)+"%"; },finish),1500);   // colour + number run together
+    later(()=>tween(3200,E_OUT,e=>{ fillSet(e*BAR_W); $("cvPct").textContent=Math.round(e*100)+"%"; },finish),1500);   // colour + number run together
   }
   // Push down on tap anywhere (the pill itself is already handled by the global Push controller)
   svg.addEventListener("pointerdown",e=>{ downT=performance.now(); if(!ready||BURSTING||e.target.closest("#cta")) return; cta.classList.add("pressed"); });
