@@ -3268,22 +3268,21 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   sty.textContent='#navwrap{z-index:1000!important;will-change:translate}#navShadow{display:none!important}';
   document.head.appendChild(sty);
   catcher.style.zIndex='999';
-  /* Safari's bottom toolbar covers the page: the tab bar moves up so it sits just above the visible area,
-     and follows the toolbar when it shows or hides. It never moves below its place. */
+  /* The tab bar follows the visible area (above Safari's bottom toolbar, or at the bottom when it is hidden).
+     Checked every frame, so it moves with the toolbar instead of jumping. */
   var vv=window.visualViewport, shift=0;
   function placeNav(){
     if(!vv) return;
-    var visibleBottom=vv.offsetTop+vv.height-8.5;
-    shift=Math.min(0, visibleBottom-8.5-810.4);
-    var t='0 '+shift.toFixed(2)+'px';
-    nav.style.translate=t; catcher.style.translate=t;
+    var r=nav.getBoundingClientRect();
+    var naturalBottom=r.top-shift+810.4;   // the bar's own bottom (the wrapper is 844pt tall)
+    var target=Math.min(0, vv.offsetTop+vv.height-8.5-naturalBottom);
+    if(Math.abs(target-shift)>0.05){
+      shift=target;
+      var t='0 '+shift.toFixed(2)+'px';
+      nav.style.translate=t; catcher.style.translate=t;
+    }
   }
-  var looping=false, until=0;
-  function loopNav(){ placeNav(); if(performance.now()<until) requestAnimationFrame(loopNav); else looping=false; }
-  function kickNav(){ until=performance.now()+700; if(!looping){ looping=true; requestAnimationFrame(loopNav); } }
-  if(vv){ vv.addEventListener('resize',kickNav); vv.addEventListener('scroll',kickNav); }
-  window.addEventListener('resize',kickNav);
-  placeNav();
+  (function loopNav(){ placeNav(); requestAnimationFrame(loopNav); })();
   function subScreenOpen(){
     try{
       if(CURRENT==='wishes'){ var fw=document.getElementById('fr-wishes'); return !!fw && fw.contentWindow.eval('CURRENT_SCREEN')!=='list'; }
