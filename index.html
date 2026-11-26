@@ -2005,10 +2005,10 @@ body{background:#d9d9d9;display:flex;justify-content:center;-webkit-font-smoothi
 .gw{position:absolute;left:0;top:0;width:272.08px;display:flex;flex-direction:column;gap:16px;transform-origin:0 0}
 .gw svg{display:block;flex:0 0 auto;overflow:visible}
 /* form fields (HTML inputs laid over the vector fields) */
-.fld{position:absolute;border:0;background:transparent;outline:none;font-family:"Cascadia Code","Cascadia Mono",monospace;color:#000;resize:none}
-.fld::placeholder{color:#CCCCCC;font-family:"Cascadia Code","Cascadia Mono",monospace;font-size:inherit}
-#nameIn{left:43.87px;top:226px;width:280px;height:24px;font-size:13.16px}
-#msgIn{left:43.87px;top:474px;width:306px;height:226px;font-size:13.16px;line-height:20.3px}
+.fld{position:absolute;border:0;background:transparent;outline:none;font-family:"Cascadia Mono",monospace;color:#000;resize:none}
+.fld::placeholder{color:#CCCCCC;font-family:"Cascadia Mono",monospace;font-size:inherit}
+#nameIn{left:43.87px;top:226px;width:340.3px;height:29.19px;font-size:16px;transform:scale(0.8225);transform-origin:0 0}
+#msgIn{left:43.87px;top:474px;width:372px;height:274.7px;font-size:16px;line-height:24.68px;transform:scale(0.8225);transform-origin:0 0}
 #fileIn{display:none}
 .press{transform-box:fill-box;transform-origin:center;cursor:pointer}
 .scr.anim{transition:transform .38s cubic-bezier(.32,.72,0,1)}
@@ -2054,7 +2054,7 @@ function ticketD(x,y,w,h){
 }
 function ticket(x,y,w,h,fill){ return `<path d="${ticketD(x,y,w,h)}" fill="${fill}"/>`; }
 const EMOJI='"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji","Segoe UI Symbol"';
-const FONT={inter:'Inter, system-ui, sans-serif', mono:'"Cascadia Mono", '+EMOJI+', monospace', code:'"Cascadia Code", "Cascadia Mono", '+EMOJI+', monospace'};
+const FONT={inter:'Inter, system-ui, sans-serif', mono:'"Cascadia Mono", '+EMOJI+', monospace', code:'"Cascadia Mono", '+EMOJI+', monospace'};
 
 /* ---------- helpers ---------- */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -3274,8 +3274,7 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   function placeNav(){
     if(!vv) return;
     var visibleBottom=vv.offsetTop+vv.height-8.5;
-    var natural=nav.getBoundingClientRect().bottom-shift;
-    shift=Math.min(0, visibleBottom-natural);
+    shift=Math.min(0, visibleBottom-8.5-810.4);
     var t='0 '+shift.toFixed(2)+'px';
     nav.style.translate=t; catcher.style.translate=t;
   }
@@ -3297,6 +3296,7 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
     nav.style.visibility=hide?'hidden':'';
     catcher.style.visibility=hide?'hidden':'';
   },200);
+  setTimeout(function(){ frameFor('wishes'); frameFor('wedding'); frameFor('location'); },1500);
   var _show=show;
   show=function(name){ _show(name); sync(name); };
 })();
