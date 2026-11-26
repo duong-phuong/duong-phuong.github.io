@@ -465,7 +465,7 @@ function show(name){
   if(name==="cover"){ document.getElementById("v-cover").classList.add("on"); nav.classList.remove("on"); navWasShown=false; return; }
   if(name==="home"){ document.getElementById("v-home").classList.add("on"); renderHome(true); }
   else if(name==="quiz"){ document.getElementById("v-quiz").classList.add("on"); renderQuiz(); }
-  else if(name==="result"){ document.getElementById("v-result").classList.add("on"); nav.classList.remove("on"); navWasShown=false; renderResult(true); return; }
+  else if(name==="result"){ document.getElementById("v-result").classList.add("on"); nav.classList.remove("on"); document.getElementById("navFadeG").innerHTML=""; navWasShown=false; renderResult(true); return; }
   else { document.getElementById("v-soon").classList.add("on"); document.getElementById("soonText").textContent=t("soonTxt"); }
   renderNav();
 }
@@ -2007,8 +2007,8 @@ body{background:#d9d9d9;display:flex;justify-content:center;-webkit-font-smoothi
 /* form fields (HTML inputs laid over the vector fields) */
 .fld{position:absolute;border:0;background:transparent;outline:none;font-family:"Cascadia Mono",monospace;color:#000;resize:none}
 .fld::placeholder{color:#CCCCCC;font-family:"Cascadia Mono",monospace;font-size:inherit}
-#nameIn{left:43.87px;top:226px;width:340.3px;height:29.19px;font-size:16px;transform:scale(0.8225);transform-origin:0 0}
-#msgIn{left:43.87px;top:474px;width:372px;height:274.7px;font-size:16px;line-height:24.68px;transform:scale(0.8225);transform-origin:0 0}
+#nameIn{left:43.87px;top:226px;width:309.4px;height:26.5px;font-size:16px;transform:scale(0.905);transform-origin:0 0}
+#msgIn{left:43.87px;top:474px;width:338.1px;height:249.7px;font-size:16px;line-height:24.64px;transform:scale(0.905);transform-origin:0 0}
 #fileIn{display:none}
 .press{transform-box:fill-box;transform-origin:center;cursor:pointer}
 .scr.anim{transition:transform .38s cubic-bezier(.32,.72,0,1)}
@@ -3271,10 +3271,11 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   /* The tab bar follows the visible area (above Safari's bottom toolbar, or at the bottom when it is hidden).
      Checked every frame, so it moves with the toolbar instead of jumping. */
   var vv=window.visualViewport, shift=0;
+  var navTop0=null, frames=0;
   function placeNav(){
     if(!vv) return;
-    var r=nav.getBoundingClientRect();
-    var naturalBottom=r.top-shift+810.4;   // the bar's own bottom (the wrapper is 844pt tall)
+    if(navTop0===null || frames++%60===0){ navTop0=nav.getBoundingClientRect().top-shift; }
+    var naturalBottom=navTop0+810.4;   // the bar's own bottom (the wrapper is 844pt tall)
     var target=Math.min(0, vv.offsetTop+vv.height-8.5-naturalBottom);
     if(Math.abs(target-shift)>0.05){
       shift=target;
