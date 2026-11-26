@@ -1974,7 +1974,7 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('650 11.68px Inter'
 <script type="text/plain" id="src-wishes"><!DOCTYPE html>
 <html lang="vi">
 <head>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"><\/script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Lời chúc · Wishes</title>
@@ -2028,8 +2028,8 @@ body{background:#d9d9d9;display:flex;justify-content:center;-webkit-font-smoothi
     <svg class="art" id="v-form" viewBox="0 0 390 844"></svg>
     <input class="fld" id="nameIn" placeholder="Nhập tên của bạn" maxlength="40">
     <button class="xbtn" id="xName" style="left:331px;top:228px" aria-label="Xóa tên"><span class="xicon"></span></button>
-    <button class="xbtn" id="xPhoto" style="left:331px;top:314px;display:none" aria-label="Bỏ ảnh"><span class="xicon"></span></button>
-    <button class="xbtn" id="xMsg" style="left:331px;top:470px;display:none" aria-label="Xóa lời chúc"><span class="xicon"></span></button>
+    <button class="xbtn" id="xPhoto" style="left:331px;top:314px;visibility:hidden" aria-label="Bỏ ảnh"><span class="xicon"></span></button>
+    <button class="xbtn" id="xMsg" style="left:331px;top:470px;visibility:hidden" aria-label="Xóa lời chúc"><span class="xicon"></span></button>
     <textarea class="fld" id="msgIn" placeholder="Viết gì đó cho hai đứa…"></textarea>
     <input type="file" id="fileIn" accept="image/*">
   </section>
@@ -2086,11 +2086,11 @@ function arrowBtn(base,arrowKey,pillX,pillW,dy=0){
 
 /* ---------- typewriter: the caret stays at the end when the text is done ---------- */
 let TYPE_TOKEN=0;
-function headWidth(t){ MEASURE.font='700 32px '+FONT.inter; MEASURE.letterSpacing='0px'; return MEASURE.measureText(t).width; }
+function headWidth(t,el){ MEASURE.font=(el?el.getAttribute('font-weight'):'700')+' '+(el?el.getAttribute('font-size'):'32')+'px '+FONT.inter; MEASURE.letterSpacing='0px'; return MEASURE.measureText(t).width; }
 function typeInto(svg,ids,texts,curId,speed=42){
   const tok=++TYPE_TOKEN, cur=svg.querySelector('#'+curId);
   let li=0, ci=0;
-  const place=()=>{ const el=svg.querySelector('#'+ids[li]); const x=+el.getAttribute('x')+headWidth(el.textContent);
+  const place=()=>{ const el=svg.querySelector('#'+ids[li]); const x=+el.getAttribute('x')+headWidth(el.textContent,el);
     cur.setAttribute('x',(x+1.5).toFixed(2)); cur.setAttribute('y',el.getAttribute('y')); };
   ids.forEach((id,k)=>{ svg.querySelector('#'+id).textContent=''; });
   place();
@@ -2118,7 +2118,7 @@ function listSVG(){
    + T(28.46,147.6,32,'inter','#333','',{w:700,id:'hl1'})
    + T(28.46,181.98,32,'inter','#333','',{w:700,id:'hl2'})
    + T(0,181.98,32,'inter','#333','|',{w:400,id:'curL',cls:'caret'})
-   + `<g class="tabbar">${asset('tabbar_wishes')}${T(239.72,786.16,11.68,'inter','#333','Lời chúc',{w:500})}</g>`;
+   ;
 }
 /* one card: same layout for every card, so the photo lands on the same spot after a swipe */
 /* card layout (from the file): content centred in the card, text left-justified.
@@ -2135,12 +2135,12 @@ const CAR={x:0,v:0,target:0,drag:null,moved:false};
 const BTN={x:590.13,v:0};
 let GROUPS=[], CARD_GROUP=[], FOCUS_CARD=0;
 function cardMetrics(i){
-  const w=WISHES[i], msg=wrapAll(w.msg,9.97,'mono',PHOTO_W);
-  const tail=(msg.length-1)*15.26+30.68;
-  const H_photo=266.36+tail, H_none=PHOTO_Y+15.26+tail;
+  const w=WISHES[i], msg=wrapAll(w.msg,10.97,'mono',PHOTO_W);
+  const tail=(msg.length-1)*16.79+30.68;
+  const H_photo=266.36+tail, H_none=PHOTO_Y+16.79+tail;
   const short=!w.photo && H_none<0.5*H_photo;
   const showArea=!!w.photo;                       // the photo area only when there is a photo
-  const base0=showArea?266.36:PHOTO_Y+15.26;
+  const base0=showArea?266.36:PHOTO_Y+16.79;
   const H=Math.min(CARD_MAX_H, base0+tail);
   return {msg, base0, H, showArea, short, overflow: base0+tail>CARD_MAX_H};
 }
@@ -2196,10 +2196,10 @@ function cardSVG(i){
     <rect x="0" y="0" width="${CARD_W}" height="${H.toFixed(2)}" rx="4.93" fill="#FFFFFF"/>
     <defs><clipPath id="${clipId}"><rect x="0" y="0" width="${CARD_W}" height="${H.toFixed(2)}"/></clipPath></defs>
     ${photo}
-    ${T(CARD_M,30.57,15.56,'mono','#1A1A1A',w.name,{w:600})}
-    ${T(CARD_M,42.55,7.52,'mono','#666',w.date)}
+    ${T(CARD_M,30.57,17.12,'mono','#1A1A1A',w.name,{w:600})}
+    ${T(CARD_M,42.55,8.27,'mono','#666',w.date)}
     <g data-cheart="${i}" transform="rotate(0 ${cx.toFixed(2)} ${cy.toFixed(2)})"><g data-heart-card="${i}" style="cursor:pointer"><g transform="translate(${HEART_X.toFixed(2)},${HEART_Y.toFixed(2)})">${A.heart_list.parts.map(part).join('')}</g></g></g>
-    <g clip-path="url(#${clipId})">${m.msg.map((l,k)=>T(CARD_M,(m.base0+k*15.26).toFixed(2),9.97,'mono','#333',l)).join('')}</g>
+    <g clip-path="url(#${clipId})">${m.msg.map((l,k)=>T(CARD_M,(m.base0+k*16.79).toFixed(2),10.97,'mono','#333',l)).join('')}</g>
     ${fade}
   </svg>`;
 }
@@ -2357,8 +2357,8 @@ const XBTN='<span class="xicon"></span>';
 function fillXIcons(){ const d=ticketD(0,0,18,18); document.querySelectorAll('.xicon').forEach(e=>{ e.outerHTML=XSVG.replace('__XD__',d); }); }
 function updateX(){
   const hasPhoto=!!PHOTO, hasMsg=document.getElementById('msgIn').value.length>0;
-  document.getElementById('xPhoto').style.display=hasPhoto?'flex':'none';
-  document.getElementById('xMsg').style.display=hasMsg?'flex':'none';
+  document.getElementById('xPhoto').style.visibility=hasPhoto?'visible':'hidden';
+  document.getElementById('xMsg').style.visibility=hasMsg?'visible':'hidden';
 }
 function resetForm(){
   document.getElementById('nameIn').value=''; document.getElementById('msgIn').value='';
@@ -3007,7 +3007,7 @@ function startSubmitFx(){
     q('#fxY').setAttribute('r',0); q('#fxCr').setAttribute('r',0);
     q('#fxTH').removeAttribute('opacity'); q('#fxTG').removeAttribute('opacity');
     if(ok){ submitWish(); doneButtonRise(); }
-    else { alert('Chưa gửi được lời chúc. Vui lòng kiểm tra mạng và thử lại.'); }
+    else { alert('Chưa gửi được lời chúc. '+LAST_ERR); }
     });
   };
   requestAnimationFrame(frame);
@@ -3027,7 +3027,7 @@ function doneButtonRise(){
 /* ---------- Supabase: approved wishes are read; a new wish and its photo are sent for approval ---------- */
 const SB_URL="https://ldqwjsiienhwbtlmmfbm.supabase.co", SB_KEY="sb_publishable_sPT36MmZYsnfP8YrBapEpQ_mrw3uEui";
 const sb=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SB_URL,SB_KEY):null;
-let SEND_P=null;
+let SEND_P=null, LAST_ERR='';
 function photoUrl(p){ return p?sb.storage.from("wish-photos").getPublicUrl(p).data.publicUrl:null; }
 function loadWishes(){
   if(!sb) return Promise.resolve();
@@ -3056,12 +3056,14 @@ async function sendWish(name,date,msg,photo,iw,ih,crop){
   }
   const ins=await sb.from("wishes").insert({name,date,msg,photo_path,iw:W,ih:H,crop});
   if(ins.error) throw ins.error;
+  WISHES.unshift({name,date,msg,photo:photo_path?photoUrl(photo_path):null,iw:W,ih:H,crop});
+  FOCUS_CARD=0; LIST_DIRTY=true; DETAIL_DIRTY=true;
 }
 function sendFromForm(){
   const msg=document.getElementById('msgIn').value.trim(); if(!msg||!sb) return Promise.resolve(false);
   const name=document.getElementById('nameIn').value.trim()||'Người thân';
   const d=new Date(), date=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
-  return sendWish(name,date,msg,PHOTO,PHOTO_IW,PHOTO_IH,CROP_FORM?{...CROP_FORM}:null).then(()=>true,()=>false);
+  return sendWish(name,date,msg,PHOTO,PHOTO_IW,PHOTO_IH,CROP_FORM?{...CROP_FORM}:null).then(()=>true,e=>{ LAST_ERR=(e&&e.message)||String(e); console.error(e); return false; });
 }
 function submitWish(){
   // the wish is sent when the animation starts (SEND_P); it is shown after the owners approve it
@@ -3072,6 +3074,7 @@ window.WishesApp={ open(s,arg){ show(s,arg); } };
 requestAnimationFrame(carFrame);
 buildPreview();
 fillXIcons();
+document.getElementById('msgIn').addEventListener('input',updateX);
 const FONTS_NEEDED=['700 32px Inter','600 12.49px Inter','400 14px Inter','400 15.48px Inter','500 12.49px Inter'];
 Promise.all([loadWishes(),...FONTS_NEEDED.map(f=>document.fonts?document.fonts.load(f):Promise.resolve())]).then(()=>{ buildDetailSlides(); show('list'); },()=>{ buildDetailSlides(); show('list'); });
 <\/script>
@@ -3246,6 +3249,7 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
     var soon=document.getElementById('soonText');
     if(SRC[name]){
       var f=frameFor(name); f.style.display='block'; soon.style.display='none';
+      if(name==='wishes'){ setTimeout(function(){ try{ f.contentWindow.eval("if(CURRENT_SCREEN==='list') typeInto(document.getElementById('v-list'),['hl0','hl1','hl2'],HEAD_LIST,'curL')"); }catch(e){} },60); }
       try{ f.contentWindow.dispatchEvent(new Event('resize')); }catch(e){}
     } else {
       soon.style.display='';
@@ -3269,14 +3273,17 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   var vv=window.visualViewport, shift=0;
   function placeNav(){
     if(!vv) return;
-    var visibleBottom=vv.offsetTop+vv.height-17;
+    var visibleBottom=vv.offsetTop+vv.height-8.5;
     var natural=nav.getBoundingClientRect().bottom-shift;
     shift=Math.min(0, visibleBottom-natural);
     var t='0 '+shift.toFixed(2)+'px';
     nav.style.translate=t; catcher.style.translate=t;
   }
-  if(vv){ vv.addEventListener('resize',placeNav); vv.addEventListener('scroll',placeNav); }
-  window.addEventListener('resize',placeNav);
+  var looping=false, until=0;
+  function loopNav(){ placeNav(); if(performance.now()<until) requestAnimationFrame(loopNav); else looping=false; }
+  function kickNav(){ until=performance.now()+700; if(!looping){ looping=true; requestAnimationFrame(loopNav); } }
+  if(vv){ vv.addEventListener('resize',kickNav); vv.addEventListener('scroll',kickNav); }
+  window.addEventListener('resize',kickNav);
   placeNav();
   function subScreenOpen(){
     try{
