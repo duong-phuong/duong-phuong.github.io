@@ -3271,11 +3271,9 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   /* The tab bar follows the visible area (above Safari's bottom toolbar, or at the bottom when it is hidden).
      Checked every frame, so it moves with the toolbar instead of jumping. */
   var vv=window.visualViewport, shift=0;
-  var navTop0=null, frames=0;
   function placeNav(){
     if(!vv) return;
-    if(navTop0===null || frames++%60===0){ navTop0=nav.getBoundingClientRect().top-shift; }
-    var naturalBottom=navTop0+810.4;   // the bar's own bottom (the wrapper is 844pt tall)
+    var naturalBottom=nav.getBoundingClientRect().top-shift+810.4;   // the bar's own bottom (the wrapper is 844pt tall)
     var target=Math.min(0, vv.offsetTop+vv.height-8.5-naturalBottom);
     if(Math.abs(target-shift)>0.05){
       shift=target;
