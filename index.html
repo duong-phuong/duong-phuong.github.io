@@ -16,22 +16,40 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .view{position:absolute;inset:0;display:none}
 .view.on{display:block}
 
-/* COVER */
-#v-cover{background:var(--gray)}
-.cover-head{position:absolute;left:0;top:0;width:100%;height:117.6px;background:var(--card)}
+/* COVER (design 1__Trang_chinh-2.ai, 1 css px = 3 pt): bg -> title + loading bar -> Let's Explore -> push -> burst */
+#v-cover{background:transparent}
+#cvSvg{position:absolute;left:0;top:0;display:block;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+#cvSvg text{white-space:pre}
+#cvSvg .cvi{font-family:var(--sans)}
+#cvSvg .cvm{font-family:var(--mono);font-weight:400}
+#cvSvg.rdy{cursor:pointer}
+#cvBg{opacity:0}
+#cvTitle{transform:translateY(40px)}
+#cvLoad,#cvPct,#cvEye,#cvDate,#cvCtaTxt{opacity:0}
+#cvCtaTxt,#cvCtaIn{transform-box:fill-box;transform-origin:center}
+#cvSvg:not(.rdy) #cta.pressed{transform:none}   /* no push while it is still loading */
+/* attention: only a soft yellow glow breathing behind the pill */
+#cvGlow{opacity:0;pointer-events:none}
+@keyframes cvGlow{0%,100%{opacity:.15}50%{opacity:.6}}
+#cvSvg.rdy #cvGlow{animation:cvGlow 2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){#cvSvg.rdy #cvGlow{animation:none;opacity:.35}}
+/* no browser focus frame when the pill is clicked; keyboard users still get a clear marker */
+#cta,#cta:focus{outline:none}
+#cta:focus-visible #cvFill{stroke:#fff;stroke-width:1.5}
+/* Cover and Home are non-scrolling screens */
+#v-cover,#cvSvg,#v-home{touch-action:none;overscroll-behavior:none}
+html:has(#v-cover.on),body:has(#v-cover.on),html:has(#v-home.on),body:has(#v-home.on){overflow:hidden;overscroll-behavior:none}
+/* while the Cover is up, the tab pages are laid out behind it (under the opaque Cover) so their fonts/effects are ready */
+#v-cover{z-index:5}
+#v-soon.warm{display:block;pointer-events:none}
+#v-soon.warm #soonText{display:none!important}
+#v-soon.warm #frames iframe{display:block!important;opacity:.01}
 .lang{position:absolute;left:299.598px;top:67.085px;width:61.704px;height:17.207px}
 .lang svg{display:block}
 .lang [data-lang]{cursor:pointer}
 .lt{font-family:var(--mono);font-weight:500;font-kerning:none;white-space:pre}
-.hero{position:absolute;left:0;right:0;top:117.6px;bottom:0;background:var(--gray)}
-.title{position:absolute;left:0;right:0;top:152px;text-align:center;font-weight:560;font-size:62px;line-height:67px;letter-spacing:-1px;color:var(--cream)}
-.eyebrow{position:absolute;left:0;right:0;top:618.7px;text-align:center;font-size:12.5px;line-height:16px;font-weight:600;letter-spacing:.2px;text-transform:uppercase}
-.date{position:absolute;left:0;right:0;top:638px;text-align:center;font-size:42px;line-height:44px;font-weight:750}
-.venue{position:absolute;left:0;right:0;top:692px;text-align:center;font-size:17px;line-height:24px;font-weight:500}
-.address{position:absolute;left:0;right:0;top:713.9px;text-align:center;font-size:13px;line-height:20px;font-weight:550}
-.cta{position:absolute;left:88.4px;top:763.4px;width:212.4px;height:34.8px;border-radius:999px;background:var(--yellow);color:var(--ink);font-size:15px;font-weight:700;line-height:1;white-space:nowrap}
 
-#burst{position:absolute;left:0;top:0;width:0;height:0;border-radius:50%;background:#F6E600;z-index:15;display:none;pointer-events:none}
+#burst{position:absolute;left:0;top:0;width:0;height:0;border-radius:50%;background:#FFE600;z-index:15;display:none;pointer-events:none}
 /* names revealed on the yellow (Cover -> Home) */
 #burstText{position:absolute;left:0;top:0;width:390px;height:844px;z-index:16;display:none;pointer-events:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink);font-family:var(--sans);font-weight:700;font-size:72px;line-height:76px;letter-spacing:-1px}
 #burstText.on{display:flex}
@@ -109,16 +127,29 @@ g.pb.pop{animation:pbpop .3s ease-out}
 <main class="screen" id="app">
 
   <section class="view on" id="v-cover">
-    <header class="cover-head">
-      <div class="lang" id="coverLang" role="group" aria-label="Language"></div>
-    </header>
-    <div class="hero" aria-hidden="true"></div>
-    <h1 class="title">Dương<br>Phương</h1>
-    <p class="eyebrow" data-i18n="eyebrow">Sắp kết hôn</p>
-    <p class="date">20.12.2027</p>
-    <p class="venue">Riverside Palace</p>
-    <p class="address">Bến Vân Đồn, Quận 4,TP. Hồ Chí Minh</p>
-    <button class="cta" id="cta" data-i18n="cta">Khám phá ngay!</button>
+    <div class="lang" id="coverLang" hidden></div>
+    <svg id="cvSvg" width="390" height="844" viewBox="0 0 390 844" aria-label="Dương Phương">
+      <defs>
+        <filter id="cvGlowF" x="-15%" y="-120%" width="130%" height="340%"><feGaussianBlur stdDeviation="7"/></filter>
+        <clipPath id="cvTitleClip"><rect x="0" y="306" width="390" height="42"/></clipPath>
+        <clipPath id="cvPill"><rect x="87.07" y="383.63" width="215.86" height="35.88" rx="17.94" ry="17.94"/></clipPath>
+        <clipPath id="cvRev"><rect id="cvRevRect" x="86" y="380" width="0" height="42"/></clipPath>
+      </defs>
+      <rect id="cvBg" width="390" height="844" fill="#22324B"/>
+      <g clip-path="url(#cvTitleClip)"><text id="cvTitle" class="cvi" x="195" y="334.72" text-anchor="middle" font-size="24" font-weight="500" fill="#F3EDE1">Dương Phương</text></g>
+      <rect id="cvOutline" x="87.24" y="383.8" width="215.52" height="35.55" rx="17.77" fill="none" stroke="#FFE600" stroke-width=".333" clip-path="url(#cvRev)"/>
+      <text id="cvLoad" class="cvm" x="87.07" y="373.68" font-size="13" fill="#fff"></text>
+      <text id="cvPct" class="cvm" x="302.93" y="373.68" text-anchor="end" font-size="16" fill="#fff">0%</text>
+      <rect id="cvGlow" x="87.07" y="383.63" width="215.86" height="35.88" rx="17.94" ry="17.94" fill="#FFE600" filter="url(#cvGlowF)"/>
+      <g id="cta" class="pb" role="button" tabindex="0" aria-label="Let's Explore!">
+        <g id="cvCtaIn">
+          <rect id="cvFill" clip-path="url(#cvPill)" x="87.07" y="383.63" width="0" height="35.88" rx="0" ry="0" fill="#FFE600"/>
+          <text id="cvCtaTxt" class="cvi" x="195" y="407.23" text-anchor="middle" font-size="15" font-weight="600" fill="#26344E">Let's Explore!</text>
+        </g>
+      </g>
+      <text id="cvEye" class="cvi" x="195" y="472.6" text-anchor="middle" font-size="13.3" fill="#F3EDE1">ARE GETTING MARRIED</text>
+      <text id="cvDate" class="cvi" x="195" y="516.63" text-anchor="middle" font-size="42" font-weight="700" fill="#F3EDE1">20.12.2027</text>
+    </svg>
   </section>
 
   <section class="view" id="v-home"><div id="homeSvg"></div><div id="hcar"></div></section>
@@ -406,6 +437,7 @@ function navFrame(ts){
       }
       sp(s.p,t.p,320,h); sp(s.a,t.a,260,h);
     });
+    if(INTRO&&INTRO.capOn&&NAV_S.capX&&(INTRO.hold||(now-INTRO.t0)/1000<1.0)){ NAV_S.capX.x=NAV_S.tabs[0].L.x+CIRC_R-CAPH/2; NAV_S.capX.v=0; }   // scrim stays exactly on the Home circle while it slides
     if(!INTRO){
       NAV_S.tabs.forEach(s=>{ if(!s.bx) s.bx={x:0,v:0}; });
       const ai=TABIDX[CURRENT], expR=NAV_DIR<0, nb=expR?ai+1:ai-1, A=NAV_S.tabs[ai];   // expR: pill opens towards the right
@@ -1035,7 +1067,7 @@ document.getElementById("v-result").addEventListener("click",e=>{
 })();
 
 // ---- Cover -> Home: yellow blooms out of the button, then shrinks around the Home tab ----
-const CTA_X=194.6, CTA_Y=780.8, BLOOM_R=830;
+const CTA_X=195, CTA_Y=401.6, BLOOM_R=520;   // centre of the new "Let's Explore!" pill (Cover design 1__Trang_chinh-2.ai); 520 > farthest corner (~483)
 const ease=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
 function setDisc(x,y,r){ const st=document.getElementById("burst").style; st.left=(x-r).toFixed(2)+"px"; st.top=(y-r).toFixed(2)+"px"; st.width=st.height=(2*r).toFixed(2)+"px"; }
 function burstAnim(a,b,dur,done,ef){
@@ -1043,7 +1075,8 @@ function burstAnim(a,b,dur,done,ef){
   el.style.display="block";
   (function f(now){
     const p=Math.min(1,(now-t0)/dur), e=(ef||ease)(p);
-    const x=a.x+(b.x-a.x)*e, y=a.y+(b.y-a.y)*e, r=a.r+(b.r-a.r)*e;
+    const A=typeof a==="function"?a():a, B=typeof b==="function"?b():b;   // a / b may be functions: the target is then read live every frame
+    const x=A.x+(B.x-A.x)*e, y=A.y+(B.y-A.y)*e, r=A.r+(B.r-A.r)*e;
     setDisc(x,y,r);
     if(p<1) requestAnimationFrame(f); else if(done) done();
   })(t0);
@@ -1067,25 +1100,28 @@ function hideNames(){   // mask reveal (slides up out of its mask) + fade out; r
   sp.forEach((x,i)=>{ out=x.animate([{transform:"translateY(0)",opacity:1},{transform:"translateY(-105%)",opacity:0}],{duration:420,delay:i*70,easing:"cubic-bezier(.55,0,.8,.3)",fill:"forwards"}); });
   return out.finished.then(()=>{ box.classList.remove("on"); sp.forEach(x=>x.getAnimations().forEach(y=>y.cancel())); });
 }
-document.getElementById("cta").addEventListener("click",()=>{
+function coverGo(){
   if(BURSTING) return; BURSTING=true;
   const c={x:CTA_X,y:CTA_Y};
   // 1) yellow spreads over the whole page
-  burstAnim({x:c.x,y:c.y,r:106},{x:c.x,y:c.y,r:BLOOM_R},700,()=>{
+  burstAnim({x:c.x,y:c.y,r:108},{x:c.x,y:c.y,r:BLOOM_R},700,()=>{
     // 2) "Dương" / "Phương" mask reveal, hold ~0.5s
     revealNames(()=>{
       // 3) Home rises + spins to the centre of the tab bar position and stands still
       document.getElementById("v-cover").classList.remove("on");
       show("home");
-      const hy=CAP_TOP+CIRC_TOP+CIRC_R, bu=document.getElementById("burst");
+      const nvT=()=>{ const v=parseFloat(((document.getElementById("navwrap").style.translate||"").split(" ")[1])); return isNaN(v)?0:v; },   // the tab bar follows the visible area (Safari toolbar)
+             hx=()=>NAV_S?(390-NAV_S.W.x)/2+NAV_S.tabs[0].L.x+CIRC_R:195, hy=()=>CAP_TOP+CIRC_TOP+CIRC_R+nvT()+(NAV_S?NAV_S.yOff.x:0),   // live centre of the Home circle (tab-bar shift + the rise offset)
+             RF=()=>Math.hypot(Math.max(hx(),390-hx()),Math.max(hy(),844-hy()))+6, bu=document.getElementById("burst");
       // names leave (mask + fade) while Home rises; the yellow only starts to shrink once they are gone AND Home has risen
       let ready=0; const go=()=>{ if(++ready<2) return;
         // 4) yellow shrinks fast behind the Home circle, then springs out to the size of the tab-bar scrim
-        burstAnim({x:c.x,y:c.y,r:BLOOM_R},{x:195,y:hy,r:CIRC_R-3},520,()=>{
+        // the screen is fully yellow here, so the disc is re-centred on Home (still covering everything) and then shrinks concentrically onto it
+        burstAnim(()=>({x:hx(),y:hy(),r:RF()}),()=>({x:hx(),y:hy(),r:CIRC_R-3}),520,()=>{
           const t0=performance.now(), D=600, R1=CIRC_R-3, R2=CAPH/2;
           (function f(now){
             const t=Math.min(D,now-t0)/1000, r=R2-(R2-R1)*Math.exp(-5*t)*Math.cos(14*t);
-            setDisc(195,hy,r);
+            setDisc(hx(),hy(),r);
             if(now-t0<D) requestAnimationFrame(f);
             else {   // 5) the yellow circle moves with Home and opens into the pill
               handoffCap(); bu.style.display="none"; BURSTING=false; releaseIntro();
@@ -1096,7 +1132,77 @@ document.getElementById("cta").addEventListener("click",()=>{
       hideNames().then(go); whenHomeStill(go);
     });
   });
-});
+}
+/* ---- Cover (design 1__Trang_chinh-2.ai) ----
+   bg fades in -> "Dương Phương" mask-reveal + loading outline draws left->right -> colour fills the frame (number follows it, "Loading" types in a loop)
+   -> at 100% the filled bar becomes the "Let's Explore!" pill (text springs in) + "ARE GETTING MARRIED / date" rise in
+   -> tap anywhere = Push down on the pill, then coverGo() (the existing yellow burst into Home) */
+(function(){
+  const $=id=>document.getElementById(id), cover=$("v-cover"), svg=$("cvSvg"), cta=$("cta");
+  const BAR_W=215.86, BAR_R=17.94, WORD="Loading";
+  const E_SINE=p=>-(Math.cos(Math.PI*p)-1)/2, E_OUT=p=>1-Math.pow(1-p,3);
+  const OUT="cubic-bezier(.2,.8,.2,1)", SPRING="cubic-bezier(.34,1.56,.64,1)";
+  let gen=0, timers=[], ready=false, typing=false, downT=0;
+  const later=(fn,ms)=>{ const g=gen; timers.push(setTimeout(()=>{ if(g===gen) fn(); },ms)); };
+  const an=(el,kf,o)=>el.animate(kf,Object.assign({fill:"forwards"},o));
+  function tween(ms,ease,step,done){ const g=gen,t0=performance.now();
+    (function f(now){ if(g!==gen) return; const p=Math.min(1,(now-t0)/ms); step(ease(p)); if(p<1) requestAnimationFrame(f); else if(done) done(); })(t0); }
+  function fillSet(w){ const f=$("cvFill"), r=Math.min(BAR_R,w/2); f.setAttribute("width",w.toFixed(2)); f.setAttribute("rx",r.toFixed(2)); f.setAttribute("ry",r.toFixed(2)); }
+  svg.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});   // non-scrolling screen (iOS rubber-band too)
+  $("v-home").addEventListener("touchmove",e=>e.preventDefault(),{passive:false});   // Home does not scroll either (iOS rubber-band)
+  const soon=$("v-soon");
+  function warmOn(){ soon.classList.add("warm"); try{ ["400 13px \"Cascadia Mono\"","500 13px \"Cascadia Mono\"","400 14px Inter","500 14px Inter","600 14px Inter","650 12px Inter","700 14px Inter"].forEach(f=>document.fonts&&document.fonts.load(f)); }catch(e){} }
+  function warmOff(){ soon.classList.remove("warm"); }
+  function stop(){ warmOff(); gen++; timers.forEach(clearTimeout); timers=[]; ready=false; typing=false; svg.classList.remove("rdy");
+    svg.getAnimations({subtree:true}).forEach(a=>a.cancel());
+    $("cvRevRect").setAttribute("width",0); fillSet(0); $("cvLoad").textContent=""; $("cvPct").textContent="0%"; }
+  function typeLoop(){   // "Loading" types in once, then stays still (only the % keeps running)
+    let n=0; typing=true;
+    (function step(){ if(!typing) return; $("cvLoad").textContent=WORD.slice(0,++n); if(n<WORD.length) later(step,90); })();
+  }
+  function finish(){
+    fillSet(BAR_W); $("cvPct").textContent="100%";
+    later(()=>{   // short hold on 100%, then the labels leave
+      [$("cvLoad"),$("cvPct")].forEach(el=>an(el,[{opacity:1,transform:"translateY(0)"},{opacity:0,transform:"translateY(-6px)"}],{duration:260,easing:"ease-in"}));
+      later(()=>{ typing=false;
+        // the filled bar is the pill: text springs in, pill gives a small spring
+        an($("cvCtaTxt"),[{opacity:0,transform:"scale(.55) translateY(10px)"},{opacity:1,transform:"scale(1) translateY(0)"}],{duration:700,easing:SPRING});
+        an($("cvCtaIn"),[{transform:"scale(1)"},{transform:"scale(1.06)",offset:.35},{transform:"scale(1)"}],{duration:650,easing:"ease-out"});
+        later(()=>{   // ARE GETTING MARRIED + date rise in
+          const kf=[{opacity:0,transform:"translateY(18px)"},{opacity:1,transform:"translateY(0)"}];
+          an($("cvEye"),kf,{duration:750,easing:OUT});
+          an($("cvDate"),kf,{duration:850,delay:140,easing:OUT});
+        },260);
+        later(()=>{ ready=true; svg.classList.add("rdy"); },600);
+      },300);
+    },220);
+  }
+  function play(){
+    stop(); warmOn();
+    an($("cvBg"),[{opacity:0},{opacity:1}],{duration:600,easing:"ease-out"});          // 1) background colour first
+    later(()=>{                                                                           // 2) title reveal + outline draws left -> right
+      an($("cvTitle"),[{transform:"translateY(40px)"},{transform:"translateY(0)"}],{duration:800,easing:OUT});
+      tween(900,E_OUT,e=>$("cvRevRect").setAttribute("width",(e*(BAR_W+4)).toFixed(2)));
+      [$("cvLoad"),$("cvPct")].forEach(el=>an(el,[{opacity:0},{opacity:1}],{duration:300,delay:150}));
+      later(typeLoop,250);
+    },450);
+    later(()=>tween(3200,E_SINE,e=>{ fillSet(e*BAR_W); $("cvPct").textContent=Math.round(e*100)+"%"; },finish),1500);   // colour + number run together
+  }
+  // Push down on tap anywhere (the pill itself is already handled by the global Push controller)
+  svg.addEventListener("pointerdown",e=>{ downT=performance.now(); if(!ready||BURSTING||e.target.closest("#cta")) return; cta.classList.add("pressed"); });
+  document.addEventListener("pointerup",()=>{ if(!BURSTING) cta.classList.remove("pressed"); });
+  document.addEventListener("pointercancel",()=>cta.classList.remove("pressed"));
+  function go(){
+    if(!ready||BURSTING) return; ready=false; svg.classList.remove("rdy");
+    const held=performance.now()-downT;
+    if(held<110){ cta.classList.add("pressed"); setTimeout(()=>cta.classList.remove("pressed"),110-held); }   // very quick tap: still show the push
+    setTimeout(coverGo,220);
+  }
+  cover.addEventListener("click",go);
+  cta.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); downT=performance.now(); go(); } });
+  new MutationObserver(()=>{ if(cover.classList.contains("on")) play(); else stop(); }).observe(cover,{attributes:true,attributeFilter:["class"]});
+  if(cover.classList.contains("on")) play();
+})();
 applyLang();
 show("cover");
 // label widths depend on the loaded font: rebuild the nav model once Inter is ready
