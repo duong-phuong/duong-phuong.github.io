@@ -38,7 +38,8 @@ body.safari-shell #app{flex-shrink:0}
 #cvBg{opacity:0}
 #cvTitle{transform:translateY(40px)}
 #cvLoad,#cvPct,#cvEye,#cvDate,#cvCtaTxt{opacity:0}
-#cvCtaTxt,#cvCtaIn{transform-box:fill-box;transform-origin:center}
+#cvCtaIn{transform-box:fill-box;transform-origin:center}
+#cvCtaTxt{transform-box:view-box;transform-origin:0 0}
 #cvSvg:not(.rdy) #cta.pressed{transform:none}   /* no push while it is still loading */
 /* attention: only a soft yellow glow breathing behind the pill */
 #cvGlow{opacity:0;pointer-events:none}
@@ -1411,7 +1412,7 @@ function coverGo(){
       [$("cvLoad"),$("cvPct")].forEach(el=>an(el,[{opacity:1,transform:"translateY(0)"},{opacity:0,transform:"translateY(-6px)"}],{duration:260,easing:"ease-in"}));
       later(()=>{ typing=false;
         // the filled bar is the pill: text springs in, pill gives a small spring
-        an($("cvCtaTxt"),[{opacity:0,transform:"scale(.55)"},{opacity:1,transform:"scale(1)"}],{duration:700,easing:SPRING});
+        an($("cvCtaTxt"),[{opacity:0,transform:"translate(195px,402px) scale(.55) translate(-195px,-402px)"},{opacity:1,transform:"translate(195px,402px) scale(1) translate(-195px,-402px)"}],{duration:700,easing:SPRING});
         an($("cvCtaIn"),[{transform:"scale(1)"},{transform:"scale(1.06)",offset:.35},{transform:"scale(1)"}],{duration:650,easing:"ease-out"});
         later(()=>{   // ARE GETTING MARRIED + date rise in
           const kf=[{opacity:0,transform:"translateY(18px)"},{opacity:1,transform:"translateY(0)"}];
@@ -3631,17 +3632,32 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   /* The tab bar follows the visible area (above Safari's bottom toolbar, or at the bottom when it is hidden).
      Checked every frame, so it moves with the toolbar instead of jumping. */
   var vv=window.visualViewport, shift=0;
+  var APP=document.getElementById("app"), FIT={s:1,top:0,left:0};
+  function fitApp(){   // the 390x844 artboard is scaled evenly to the visible area and centred in it
+    var W=vv?vv.width:window.innerWidth, H=vv?vv.height:window.innerHeight;
+    var ox=vv?vv.offsetLeft:0, oy=vv?vv.offsetTop:0;
+    var s=Math.min(W/390,H/844), left=ox+(W-390*s)/2, top=oy+(H-844*s)/2;
+    if(Math.abs(s-FIT.s)>0.0005||Math.abs(left-FIT.left)>0.05||Math.abs(top-FIT.top)>0.05){
+      FIT={s:s,left:left,top:top};
+      APP.style.position="fixed"; APP.style.left="0px"; APP.style.top="0px"; APP.style.margin="0";
+      APP.style.transformOrigin="0 0";
+      APP.style.transform="translate("+left.toFixed(2)+"px,"+top.toFixed(2)+"px) scale("+s.toFixed(4)+")";
+    }
+  }
   function placeNav(){
     if(!vv) return;
-    var naturalBottom=nav.getBoundingClientRect().top-shift+810.4;   // the bar's own bottom (the wrapper is 844pt tall)
-    var target=Math.min(0, vv.offsetTop+vv.height-8.5-naturalBottom);
+    var s=FIT.s;
+    var navTopVP=nav.getBoundingClientRect().top;            // includes the current shift (scaled)
+    var naturalBottomVP=navTopVP-shift*s+810.4*s;             // the bar's own bottom, in screen pixels
+    var targetVP=Math.min(0, vv.offsetTop+vv.height-8.5-naturalBottomVP);
+    var target=targetVP/s;
     if(Math.abs(target-shift)>0.05){
       shift=target;
       var t='0 '+shift.toFixed(2)+'px';
       nav.style.translate=t; catcher.style.translate=t;
     }
   }
-  (function loopNav(){ placeNav(); requestAnimationFrame(loopNav); })();
+  (function loopNav(){ fitApp(); placeNav(); requestAnimationFrame(loopNav); })();
   function subScreenOpen(){
     try{
       if(CURRENT==='wishes'){ var fw=document.getElementById('fr-wishes'); return !!fw && fw.contentWindow.eval('CURRENT_SCREEN')!=='list'; }
