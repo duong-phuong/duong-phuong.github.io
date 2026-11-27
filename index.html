@@ -83,13 +83,17 @@ html:has(#v-cover.on),body:has(#v-cover.on),html:has(#v-home.on),body:has(#v-hom
 #v-home .i6{font-family:var(--sans);font-weight:600}
 #v-home [data-lang]{cursor:pointer}
 @keyframes hcaret{50%{opacity:0}}
-#hcar{position:absolute;left:0;top:283.792px;width:390px;height:394.457px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+/* red heart: beats non-stop (lub-dub, then a short rest) */
+@keyframes hbeat{0%,100%{transform:scale(1)}12%{transform:scale(1.3)}24%{transform:scale(1.02)}38%{transform:scale(1.22)}58%{transform:scale(1)}}
+#v-home .hbeat{transform-box:fill-box;transform-origin:center;animation:hbeat 1.25s ease-in-out infinite}
+#hcar{position:absolute;left:0;top:258.52px;width:390px;height:354.8px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
 #hcar.drag{cursor:grabbing}
 #v-home.hgate #homeSvg,#v-home.hgate #hcar{pointer-events:none}   /* Home content fades in while the Home pill opens (opacity set from JS) */
-#hcar .hc{position:absolute;left:0;top:0;width:289.829px;overflow:hidden;background-size:cover;background-position:center;will-change:transform,filter;pointer-events:none}
+#hcar .hc{position:absolute;left:0;top:0;width:260.67px;overflow:hidden;background-size:cover;background-position:center;will-change:transform,filter;pointer-events:none}
 
 /* QUIZ */
-#v-quiz{background:var(--card);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:130px}
+#v-quiz{background:var(--card);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:calc(130px + var(--app-gap,0px))}   /* --app-gap = how much of the 844px screen is hidden under the browser toolbar: lets the last questions scroll into the visible area */
+html:has(#v-quiz.on),body:has(#v-quiz.on){overflow:hidden;overscroll-behavior:none}   /* the page itself never scrolls on Quiz, so the yellow header stays put */
 #qhead{position:sticky;top:0;z-index:5;height:88.89px;background:var(--yellow)}
 #qhead svg,#cards svg{display:block}
 .qc{display:block;overflow:visible}
@@ -133,7 +137,7 @@ g.pb.pop{animation:pbpop .3s ease-out}
 /* NAV overlay */
 #navwrap{position:absolute;left:0;top:0;width:390px;height:844px;pointer-events:none;z-index:20;display:none}
 #navwrap.on{display:block}
-#navwrap svg{position:absolute;left:0;top:0}
+#navwrap svg{position:absolute;left:0;top:0;overflow:visible}
 #navwrap .hit{pointer-events:all;cursor:pointer;fill:transparent}
 </style>
 <style>#frames iframe{position:absolute;left:0;top:0;width:390px;height:844px;border:0;display:none}</style>
@@ -308,7 +312,7 @@ function navModel(L){
     // pill: left gap (pill edge -> icon ink) == right gap (label ink -> pill edge)
     const lab=vP.label, m=inkOf(lab.text);
     const labelRel=lab.x-pill.x, labelInkL=labelRel+m.left, tw=m.right-m.left;
-    const VN_EXT=4, VN_SHIFT=-2;     // vi: pill 4px longer on the right; content moves 2px so both sides stay equal
+    const VN_EXT=4, VN_SHIFT=VN_EXT/2;     // vi: the pill is 4px longer on the right, so the content is centred in the longer pill (was -2: it sat too far left)
     const iL=pb.l-pill.x, iR=pb.r-pill.x, iW=iR-iL, gap=labelInkL-iR;
     const G=iW+gap+tw, pad=(pill.w-G)/2;
     const ext = (L===1)?VN_SHIFT:0;
@@ -319,6 +323,11 @@ function navModel(L){
   }
   NAV_MODEL[L]=tabs; return tabs;
 }
+(function(){   // the label is measured on a canvas: redo the layout once the Inter webfont is really loaded (on phones it arrives after first paint)
+  if(!document.fonts||!document.fonts.load) return;
+  const redo=()=>{ for(const k in INK_CACHE) delete INK_CACHE[k]; for(const k in NAV_MODEL) delete NAV_MODEL[k]; try{ if(NAV_S) drawNav(); }catch(e){} };
+  document.fonts.load("650 11.68px Inter").then(redo,redo); document.fonts.ready.then(redo);
+})();
 function tabT(i,ai,v){ const c=v.containers[i], act=(i===ai); return {L:c.x, R:c.x+(act?c.w:CIRC_D), p:act?1:0, a:1}; }
 function effTargets(now){
   const L=LANG==="vi"?1:0, ai=TABIDX[CURRENT], v=TB[2*ai+L];
@@ -377,7 +386,7 @@ function drawNav(){
   g=g.replace('<rect x="'+CX.toFixed(2)+'" y="0" width=', '<defs>'+defs+'</defs><rect x="'+CX.toFixed(2)+'" y="0" width=');
   g+=hits+'</g>';
   document.getElementById("navG").innerHTML=g;
-  document.getElementById("navFadeG").innerHTML = CURRENT==="quiz" ? '<rect x="0" y="690" width="390" height="154" fill="url(#fadeG)" pointer-events="none"/>' : "";
+  document.getElementById("navFadeG").innerHTML = CURRENT==="quiz" ? '<rect x="0" y="690" width="390" height="700" fill="url(#fadeG)" pointer-events="none"/>' : "";
 }
 // first appearance: Home rises, spins to its place, the bar runs right, then the other icons run out of Home one after another
 const INTRO_TS=[0,1.5,1.7,1.9,2.1];      // start time of each tab (Home is the first to move)
@@ -574,9 +583,10 @@ try{const s=localStorage.getItem("lang"); if(s==="en"||s==="vi") LANG=s;}catch(e
 
 /* ============ HOME ============ */
 const HOME_T={
-  vi:{sub:"Nơi đây lưu giữ nhiều kỷ niệm vui", and:"và", p:["Một bộ ảnh, từng khoảnh khắc.","Bấm vào ảnh phía sau để bước","lên, hoặc xem cả bộ. Trả lời vài","câu hỏi vui về dâu rể"], cap:"< Vuốt sang trái hoặc phải để xem ảnh >"},
-  en:{sub:"A place filled with so many happy memories", and:"and", p:["A set of photos, moment by moment.","Tap the photo behind to step up,","or see the whole set. Answer a few","fun questions about the bride and groom"], cap:"< Swipe left or right to view photos >"}
+  vi:{sub:"Ở đây giữ nhiều kỷ niệm vui", and:"và", p:["Một bộ ảnh, từng khoảnh khắc. Bấm vào hình","để xem chi tiết, trả lời vài câu hỏi vui","và gởi lời chúc đến dâu rể."], cap:"< Vuốt sang trái hoặc phải để xem ảnh >"},
+  en:{sub:"Here we keep many happy memories", and:"and", p:["A set of photos, moment by moment. Tap","a photo for the details, answer a few fun","questions and send wishes to the couple."], cap:"< Swipe left or right to view photos >"}
 };
+const HOME_PY=[186.65,204.07,221.5];   // baselines of the 3 paragraph lines
 function langToggleInner(vn){   // VN | EN ticket (design 2__Home.ai), local coords 61.704 x 17.207; used by Cover and Home
   return `<path d="M0 0H61.704V6.364A2.24 2.24 0 0 0 61.704 10.844V17.207H0V10.844A2.24 2.24 0 0 0 0 6.364Z" fill="#F6E600"/>
 <g stroke="#000" stroke-width="0.329" fill="none"><path d="M30.852 0V0.494M30.852 16.714V17.207"/><path d="M30.852 1.448V16.237" stroke-dasharray="0.954 0.954"/></g>
@@ -593,26 +603,30 @@ document.getElementById("coverLang").addEventListener("click",e=>{
 const HOME_HEART="M8.722 2.536C8.722 3.131 8.562 3.738 8.249 4.284C7.697 5.246 6.581 6.72 4.406 8.274L4.244 8.389L4.083 8.274C1.907 6.72 0.791 5.246 0.24 4.284C-0.291 3.36 -0.381 2.258 0 1.34C0.365 0.463 0.998 0 1.833 0C3.185 0 3.907 0.525 4.244 0.888C4.582 0.525 5.303 0 6.655 0C7.491 0 8.123 0.463 8.489 1.34C8.645 1.717 8.722 2.123 8.722 2.536Z";
 function renderHome(animate){
   const h=HOME_T[LANG], esc=x=>x.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  const vn=LANG==="vi", heartX=28.166+h.sub.length*7.7543+6.912, capX=194.765-h.cap.length*6.4804/2;
-  const para=h.p.map((l,i)=>`<text class="m4" x="26.798" y="${[186.344,203.779,221.214,238.649][i]}" font-size="14.2444" letter-spacing="-0.2849" fill="#666" id="hp${i}">${animate?"":esc(l)}</text>`).join("");
+  const vn=LANG==="vi", heartX=28.256+(h.sub.length+1)*7.7543, capX=194.765-h.cap.length*6.4804/2;
+  const para=h.p.map((l,i)=>`<text class="m4" x="26.798" y="${HOME_PY[i]}" font-size="13.77" letter-spacing="-0.2754" fill="#666" id="hp${i}">${animate?"":esc(l)}</text>`).join("");
   document.getElementById("homeSvg").innerHTML=`<svg width="390" height="844" viewBox="0 0 390 844" role="img" aria-label="Dương và Phương">
 <g transform="translate(299.598 67.085)">${langToggleInner(vn)}</g>
-<text class="m5" x="28.166" y="106.66" font-size="13.7012" letter-spacing="-0.274" fill="#666">${esc(h.sub)}</text>
-<path transform="translate(${heartX.toFixed(3)} 98.806)" d="${HOME_HEART}" fill="#F43C1E"/>
-<text class="i7" x="26.798" y="152.267" font-size="40.0944" letter-spacing="-1.6038" fill="#333">Dương <tspan class="i6" font-size="23.7724" letter-spacing="-0.9509">${h.and}</tspan> Phương</text>
+<text class="m5" x="28.166" y="107.36" font-size="13.7012" letter-spacing="-0.274" fill="#666">${esc(h.sub)}</text>
+<g transform="translate(${heartX.toFixed(3)} 97.86)"><path class="hbeat" d="${HOME_HEART}" fill="#F43C1E"/></g>
+<text class="i7" x="26.798" y="152.94" font-size="40.0944" letter-spacing="-1.6038" fill="#333">Dương <tspan class="i6" font-size="23.7724" letter-spacing="-0.9509">${h.and}</tspan> Phương</text>
 ${para}
-${animate?'<rect id="hCaret" x="26.798" y="174.5" width="1.4" height="15.5" fill="#666" style="animation:hcaret .8s steps(1) infinite"/>':""}
-<text class="m5" x="${capX.toFixed(3)}" y="703.209" font-size="11.8701" letter-spacing="-0.4748" fill="#333">${esc(h.cap)}</text>
+<rect id="hCaret" x="26.798" y="${(HOME_PY[0]-11.8).toFixed(2)}" width="1.4" height="15.5" fill="#666" style="animation:hcaret .8s steps(1) infinite"/>
+<text class="m5" x="${capX.toFixed(3)}" y="641.81" font-size="11.8701" letter-spacing="-0.4748" fill="#333">${esc(h.cap)}</text>
 </svg>`;
   hcInit();
   homeGate();
-  if(animate) homeType(h.p); else cancelAnimationFrame(HOME_TYPE_RAF);
+  if(animate) homeType(h.p); else { cancelAnimationFrame(HOME_TYPE_RAF); homeCaretEnd(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(homeCaretEnd); }
 }
 let HOME_TYPE_RAF=0;
-function homeType(lines){   // typewriter for the intro paragraph: starts once Home is visible, a caret follows the text
+function homeCaretEnd(){   // caret sits after the last character and keeps blinking
+  const c=document.getElementById("hCaret"), n=HOME_T[LANG].p.length-1, el=document.getElementById("hp"+n); if(!c||!el) return;
+  c.setAttribute("x",(26.798+el.getComputedTextLength()).toFixed(2)); c.setAttribute("y",(HOME_PY[n]-11.8).toFixed(2));
+}
+function homeType(lines){   // typewriter for the intro paragraph: starts once Home is visible; the caret follows the text and keeps blinking after it
   cancelAnimationFrame(HOME_TYPE_RAF);
   const els=lines.map((_,i)=>document.getElementById("hp"+i)), caret=document.getElementById("hCaret");
-  const base=[186.344,203.779,221.214,238.649], total=lines.reduce((a,l)=>a+l.length,0), per=24;   // 24 ms per character
+  const base=HOME_PY, total=lines.reduce((a,l)=>a+l.length,0), per=24;   // 24 ms per character
   let t0=null;
   (function f(now){
     if(!els[0]||!els[0].isConnected) return;
@@ -621,7 +635,7 @@ function homeType(lines){   // typewriter for the intro paragraph: starts once H
     let left=Math.max(0,Math.min(total,Math.floor((now-t0)/per))), cl=0;
     lines.forEach((l,i)=>{ const k=Math.min(l.length,left); els[i].textContent=l.slice(0,k); if(left>0) cl=i; left-=k; });
     if(caret){ caret.setAttribute("x",(26.798+els[cl].getComputedTextLength()).toFixed(2)); caret.setAttribute("y",(base[cl]-11.8).toFixed(2)); }
-    if(now-t0>=total*per){ setTimeout(()=>{ if(caret) caret.remove(); },1200); return; }
+    if(now-t0>=total*per) return;   // finished: the caret stays and keeps blinking
     HOME_TYPE_RAF=requestAnimationFrame(f);
   })(performance.now());
 }
@@ -645,7 +659,7 @@ function homeGate(){   // first visit: Home content fades in with the opening of
 const HOME_PHOTOS=[];   // photo URLs go here, e.g. ["img/1.jpg","img/2.jpg",...]; while empty, coloured placeholders are shown
 const HOME_PH=["#E07A5F","#3D85C6","#81B29A","#F2CC8F","#9B72AA"];
 const HC={pos:0,N:0,els:[],raf:0};
-const HC_G={cx:50.484,lx:-17.158,rx:118.275,sy:23.912,ch:394.457,sh:346.634,cr:8.226,sr:7.711,blur:3,step:130};
+const HC_G={cx:64.95,lx:0,rx:124.77,sy:21.51,ch:354.8,sh:311.8,w:260.8,sw:265.2,cr:7.4,sr:6.94,blur:3,step:117,sideOp:0.5};   // design 2__Home-2.ai; sideOp = opacity of the photos behind
 function hcLayout(){
   const g=HC_G;
   HC.els.forEach((el,i)=>{
@@ -654,8 +668,10 @@ function hcLayout(){
     el.style.display=Math.abs(k)>2?"none":"block";
     el.style.transform=`translate(${(g.cx+(side-g.cx)*a).toFixed(2)}px,${(g.sy*a).toFixed(2)}px)`;
     el.style.height=(g.ch+(g.sh-g.ch)*a).toFixed(2)+"px";
+    el.style.width=(g.w+(g.sw-g.w)*a).toFixed(2)+"px";
     el.style.borderRadius=(g.cr+(g.sr-g.cr)*a).toFixed(2)+"px";
     el.style.filter=a>0.001?`grayscale(${a.toFixed(3)}) blur(${(a*g.blur).toFixed(2)}px)`:"none";
+    const ak=Math.abs(k); el.style.opacity=(ak<=1?1-(1-g.sideOp)*ak:g.sideOp*Math.max(0,2-ak)).toFixed(3);   // behind photos are faded; the one coming from further away fades in
     el.style.zIndex=String(100-Math.round(Math.abs(k)*20));
   });
 }
@@ -668,6 +684,12 @@ function hcAnim(target,v0){   // spring with the release velocity = inertia, set
     if(Math.abs(x-target)<0.0008&&Math.abs(v)<0.01){ HC.pos=((target%HC.N)+HC.N)%HC.N; hcLayout(); return; }
     HC.raf=requestAnimationFrame(f);
   })(t0);
+}
+function homeOpenPhoto(i){   // Home photo -> Wedding tab, straight into the photo detail (uses the Wedding tab's own WD API, nothing in it is changed)
+  show("wedding");
+  const f=document.getElementById("fr-wedding"), o={album:"wedding",i:i%20,scr:"det",sub:"car",from:"car",ui:true};
+  const go=()=>{ try{ f.contentWindow.WD._set(o); }catch(e){} };
+  if(f&&f.contentWindow&&f.contentWindow.WD) go(); else if(f) f.addEventListener("load",()=>setTimeout(go,60),{once:true});
 }
 function hcInit(){
   if(HC.els.length){ hcLayout(); return; }
@@ -690,7 +712,7 @@ function hcInit(){
     const base=Math.round(d.p); let target;
     if(d.m<6){   // tap: the photo behind steps forward
       const x=e.clientX-box.getBoundingClientRect().left;
-      target=x<HC_G.cx?base-1:(x>HC_G.cx+289.829?base+1:base); v=0;
+      v=0; if(x<HC_G.cx) target=base-1; else if(x>HC_G.cx+HC_G.w) target=base+1; else { target=base; homeOpenPhoto(((base%HC.N)+HC.N)%HC.N); }   // tap the main photo: open it in the Wedding tab
     } else target=Math.max(base-2,Math.min(base+2,Math.round(HC.pos+v*0.22)));
     d=null; hcAnim(target,v);
   };
@@ -908,6 +930,18 @@ function renderQuiz(){
   document.getElementById("finish").classList.toggle("show", S.every(x=>x.ans));
   if(!S.every(x=>x.ans)){ document.getElementById("finish").classList.remove("ready"); document.getElementById("finishBtn").classList.remove("attn"); }
 }
+function scrollToCard(i){
+  const q=document.getElementById("v-quiz"), card=document.querySelector(`[data-card="${i}"]`); if(!card||!q.classList.contains("on")) return;
+  const vv=window.visualViewport, HDR=88.89, visBottom=Math.min(844,(vv&&vv.height)||window.innerHeight||844)-75;   // 75 = tab bar + gap
+  const top=card.offsetTop-q.scrollTop, bot=top+CARD_H;
+  if(top<HDR||bot>visBottom) q.scrollTo({top:Math.max(0,card.offsetTop-HDR),behavior:"smooth"});
+}
+(function(){   // --app-gap follows the browser toolbar; keep the page at the top while Quiz is open
+  const vv=window.visualViewport, q=document.getElementById("v-quiz");
+  const upd=()=>{ const vh=(vv&&vv.height)||window.innerHeight||844; document.documentElement.style.setProperty("--app-gap",Math.max(0,844-vh).toFixed(1)+"px"); };
+  upd(); window.addEventListener("resize",upd,{passive:true}); if(vv) vv.addEventListener("resize",upd,{passive:true});
+  new MutationObserver(()=>{ if(q.classList.contains("on")) window.scrollTo(0,0); }).observe(q,{attributes:true,attributeFilter:["class"]});
+})();
 document.getElementById("cards").addEventListener("click",e=>{
   const opt=e.target.closest("[data-card-opt]");
   const ans=e.target.closest("[data-ans]");
@@ -925,6 +959,7 @@ document.getElementById("cards").addEventListener("click",e=>{
     const nxt=S.findIndex(x=>!x.ans); if(nxt>=0) FOCUS=nxt;
     FLIP={i,t0:performance.now(),dur:400};
     renderQuiz(); flipLoop();
+    if(nxt>=0) setTimeout(()=>scrollToCard(nxt),450);   // after the coin flip: bring the next question into view (only the questions scroll, the header stays)
     if(S.every(x=>x.ans)) setTimeout(()=>{   // everything answered: scroll down to the "Xem tổng kết" ticket and let it appear
       const q=document.getElementById("v-quiz"); scrollInertia(q,q.scrollHeight-q.clientHeight,1100,finishRise);
     },500);
