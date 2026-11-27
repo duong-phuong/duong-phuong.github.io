@@ -624,7 +624,7 @@ function renderHome(animate){
   const vn=LANG==="vi", heartX=28.256+(h.sub.length+1)*7.7543, capX=194.765-h.cap.length*6.4804/2;
   const para=h.p.map((l,i)=>`<text class="m4" x="26.798" y="${HOME_PY[i]}" font-size="14.2444" letter-spacing="-0.2849" fill="#666" id="hp${i}">${animate?"":esc(l)}</text>`).join("");
   document.getElementById("homeSvg").innerHTML=`<svg width="390" height="844" viewBox="0 0 390 844" role="img" aria-label="Dương và Phương">
-<g id="homeLangG" transform="translate(299.598 67.085)">${langToggleInner(vn)}</g>
+<g transform="translate(299.598 67.085)">${langToggleInner(vn)}</g>
 <text class="m5" x="28.166" y="107.36" font-size="13.7012" letter-spacing="-0.274" fill="#666">${esc(h.sub)}</text>
 <g transform="translate(${heartX.toFixed(3)} 97.86)"><path class="hbeat" d="${HOME_HEART}" fill="#F43C1E"/></g>
 <text class="i7" x="26.798" y="152.94" font-size="40.0944" letter-spacing="-1.6038" fill="#333">Dương <tspan class="i6" font-size="23.7724" letter-spacing="-0.9509">${h.and}</tspan> Phương</text>
@@ -3632,39 +3632,17 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   /* The tab bar follows the visible area (above Safari's bottom toolbar, or at the bottom when it is hidden).
      Checked every frame, so it moves with the toolbar instead of jumping. */
   var vv=window.visualViewport, shift=0;
-  var APP=document.getElementById("app"), FIT={s:1,top:0,left:0};
-  function fitApp(){   // the 390x844 artboard is scaled evenly to the visible area and centred in it
-    var W=vv?vv.width:window.innerWidth, H=vv?vv.height:window.innerHeight;
-    var ox=vv?vv.offsetLeft:0, oy=vv?vv.offsetTop:0;
-    var s=Math.min(W/390,H/844), left=ox+(W-390*s)/2, top=oy+(H-844*s)/2;
-    if(Math.abs(s-FIT.s)>0.0005||Math.abs(left-FIT.left)>0.05||Math.abs(top-FIT.top)>0.05){
-      FIT={s:s,left:left,top:top};
-      APP.style.position="fixed"; APP.style.left="0px"; APP.style.top="0px"; APP.style.margin="0";
-      APP.style.transformOrigin="0 0";
-      APP.style.transform="translate("+left.toFixed(2)+"px,"+top.toFixed(2)+"px) scale("+s.toFixed(4)+")";
-    }
-  }
   function placeNav(){
     if(!vv) return;
-    var s=FIT.s, H=vv.height, oy=vv.offsetTop, home=(CURRENT==="home");
-    var navTopVP=nav.getBoundingClientRect().top;            // includes the current shift (scaled)
-    var naturalBottomVP=navTopVP-shift*s+810.4*s;             // the bar's own bottom, in screen pixels
-    var bottomVP=oy+H-(home?0.04*H:8.5);                      // Home: 4% of the height from the bottom; others: above the toolbar
-    var targetVP=home?(bottomVP-naturalBottomVP):Math.min(0, bottomVP-naturalBottomVP);
-    var target=targetVP/s;
+    var naturalBottom=nav.getBoundingClientRect().top-shift+810.4;   // the bar's own bottom (the wrapper is 844pt tall)
+    var target=Math.min(0, vv.offsetTop+vv.height-8.5-naturalBottom);
     if(Math.abs(target-shift)>0.05){
       shift=target;
       var t='0 '+shift.toFixed(2)+'px';
       nav.style.translate=t; catcher.style.translate=t;
     }
-    // Home: the VN/EN ticket sits 7.9% of the height from the top
-    var g=document.getElementById("homeLangG");
-    if(home&&g){
-      var dy=((oy+0.079*H)-(FIT.top+67.085*s))/s;
-      g.setAttribute("transform","translate(299.598 "+(67.085+dy).toFixed(3)+")");
-    }
   }
-  (function loopNav(){ fitApp(); placeNav(); requestAnimationFrame(loopNav); })();
+  (function loopNav(){ placeNav(); requestAnimationFrame(loopNav); })();
   function subScreenOpen(){
     try{
       if(CURRENT==='wishes'){ var fw=document.getElementById('fr-wishes'); return !!fw && fw.contentWindow.eval('CURRENT_SCREEN')!=='list'; }
