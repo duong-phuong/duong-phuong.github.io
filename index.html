@@ -2510,9 +2510,11 @@ body{background:#d9d9d9;display:flex;justify-content:center;-webkit-font-smoothi
 .slot{position:absolute;top:0;width:272.08px;height:352px}
 #dtrack{position:absolute;left:0;top:0;width:390px;height:844px;overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none}
 #dstage{position:absolute;left:0;top:0;width:390px;height:844px;will-change:transform}
-.dslide{position:absolute;top:0;width:390px;height:844px;overflow-y:hidden;overflow-x:hidden;scrollbar-width:none;touch-action:none;transform:translateY(-40px)}
-#v-form,#v-preview{transform:translateY(-40px)}
-#nameIn,#msgIn,#fileIn,#xName,#xMsg,#xPhoto{margin-top:-40px}   /* the HTML fields and their X buttons move with the page */
+.dslide{position:absolute;top:0;width:390px;height:844px;overflow-y:hidden;overflow-x:hidden;scrollbar-width:none;touch-action:none;transform:translateY(-25.02px)}
+#v-dhead{transform:translateY(-25.02px);z-index:10}
+#v-list{transform:translateY(-13.4px)}
+#v-form,#v-preview{transform:translateY(-28.53px)}
+#nameIn,#msgIn,#fileIn,#xName,#xMsg,#xPhoto{margin-top:-28.53px}   /* the HTML fields and their X buttons move with the page */
 .dslide::-webkit-scrollbar{display:none}
 .dslide svg{display:block}
 .gw{position:absolute;left:0;top:0;width:272.08px;display:flex;flex-direction:column;gap:16px;transform-origin:0 0}
@@ -3826,7 +3828,7 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   show=function(name){ _show(name); sync(name);
     var lock=(name==='wedding'); var tc=document.getElementById('safariThemeColor');
     var THEME={home:'#FFFEF9', wishes:'#FFFEF9', location:'#999999', wedding:'#FFFEF9'};
-    if(tc) tc.setAttribute('content', THEME[name]||(TC0||'#22324B'));
+    if(tc && !(name==='home' && typeof BURSTING!=='undefined' && BURSTING)) tc.setAttribute('content', THEME[name]||(TC0||'#22324B'));
     document.body.classList.toggle('wd-cream',name==='wedding'); };
 })();
 </script>
