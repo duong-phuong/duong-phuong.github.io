@@ -1620,7 +1620,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .wd-th{width:103.6px;height:130.54px;border-radius:4.94px;background:#666;overflow:hidden}
 .wd-cell .wd-tk{position:absolute;left:30.45px;top:146.4px;width:42.71px;--h:27.73px;display:flex;align-items:center;justify-content:center;font:600 23.7px/1 var(--mono);color:#000}
 .wd-cell .wd-tk>span{top:.69px}
-.wd-gfade{position:absolute;left:0;right:0;bottom:0;height:219px;pointer-events:none;background:linear-gradient(to bottom,rgba(255,254,249,0) 0%,rgba(255,254,249,.2) 8%,rgba(255,254,249,.45) 16%,rgba(255,254,249,.7) 24%,rgba(255,254,249,.88) 32%,rgba(255,254,249,.95) 38%,#FFFEF9 46%,#FFFEF9 100%)}
+.wd-gfade{position:absolute;left:0;right:0;bottom:0;height:300px;pointer-events:none;background:linear-gradient(to bottom,rgba(255,254,249,0) 0%,rgba(255,254,249,.042) 11%,rgba(255,254,249,.154) 22%,rgba(255,254,249,.312) 33%,rgba(255,254,249,.494) 44%,rgba(255,254,249,.677) 55%,rgba(255,254,249,.837) 66%,rgba(255,254,249,.952) 77%,#FFFEF9 88.7%,#FFFEF9 100%)}
 
 /* ---- Chi tiết ảnh ---- */
 .wd-img{position:absolute;left:0;top:77.9px;width:390px;height:741.8px;background:#666;overflow:hidden;touch-action:pan-y}
@@ -1642,6 +1642,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 @property --wd-p{syntax:"<percentage>";inherits:false;initial-value:125%}
 .wd-ln{position:absolute;left:30.03px;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,#000 calc(var(--wd-p) - 12%),transparent var(--wd-p));mask-image:linear-gradient(90deg,#000 calc(var(--wd-p) - 12%),transparent var(--wd-p))}
 .wd-cream{color:var(--wd-cream)}
+
+/* zoom 2 ngón ở Chi tiết: ẩn nút/tiêu đề, ảnh tràn màn hình */
+#wd.wd-zm .wd-dui,#wd.wd-zm #wd-head{opacity:0;pointer-events:none}
+#wd.wd-zm .wd-back{pointer-events:none}
 
 /* ẩn thanh tab khi xem chi tiết (CSS riêng, không đụng code thanh tab) */
 #app.wd-full #navwrap{opacity:0;pointer-events:none}
@@ -2224,6 +2228,7 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('650 11.68px Inter'
     root.classList.remove("wd-s-gal","wd-s-main","wd-s-det","wd-v-car","wd-v-grid");
     root.classList.add("wd-s-"+S.scr,"wd-v-"+S.sub);
     root.classList.toggle("wd-ui-off",!S.ui);
+    if(S.scr!=="det"&&(zs!==1||zUsed)) zReset(false);
     $("wd-tab1").classList.toggle("off",S.sub!=="car");
     $("wd-tab2").classList.toggle("off",S.sub!=="grid");
     $("wd-title").textContent=ALB[S.album].t[lang()];
@@ -2353,7 +2358,71 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('650 11.68px Inter'
     const r=$("wd-stage").getBoundingClientRect(), x=(e.clientX-r.left)*390/r.width;
     if(x>=27.2&&x<=266.9) openDet("car"); else if(x>266.9) step(1); else step(-1);
   });
-  gesture($("wd-img"),()=>step(1),()=>step(-1),()=>{ S.ui=!S.ui; paint(); });   // chạm ảnh: ẩn/hiện nút
+  gesture($("wd-img"),()=>{ if(!zBlock()) step(1); },()=>{ if(!zBlock()) step(-1); },()=>{ if(zBlock()) return; S.ui=!S.ui; paint(); });   // chạm ảnh: ẩn/hiện nút
+
+  /* ---------- ZOOM 2 NGÓN (Chi tiết): chụm/nở để phóng to tràn màn hình, 1 ngón kéo ảnh ---------- */
+  const ZFY=77.9, ZFH=741.8, ZMAX=5;
+  let zs=1, ztx=0, zty=0, zUsed=false, zPinch=null, zPan=null;
+  const zp=new Map(), zimg=$("wd-img");
+  function zBlock(){ return zUsed||zs>1.001; }
+  function zClamp(){
+    const w=390*zs, h=ZFH*zs;
+    ztx=Math.min(0,Math.max(390-w,ztx));
+    let T=ZFY+zty;
+    if(h>=844) T=Math.min(0,Math.max(844-h,T));
+    else { const t=(h-ZFH)/(844-ZFH); T=ZFY*(1-t)+((844-h)/2)*t; }   // chưa phủ kín màn hình: căn dần ra giữa
+    zty=T-ZFY;
+  }
+  function zApply(){
+    zClamp();
+    zimg.style.transformOrigin="0 0";
+    zimg.style.transform=zs>1.001||ztx||zty?"translate("+ztx+"px,"+zty+"px) scale("+zs+")":"";
+    root.classList.toggle("wd-zm",zs>1.001);
+  }
+  function zReset(anim){
+    zs=1; ztx=0; zty=0; zp.clear(); zPinch=null; zPan=null; zUsed=false;
+    if(anim){ zimg.style.transition="transform .3s cubic-bezier(.22,.8,.2,1)"; setTimeout(()=>{ zimg.style.transition=""; },340); }
+    else zimg.style.transition="";
+    zApply();
+  }
+  const zPos=e=>{ const r=view.getBoundingClientRect(), k=390/r.width; return {x:(e.clientX-r.left)*k, y:(e.clientY-r.top)*k}; };
+  function zStartPan(p){ zPan={x:p.x,y:p.y,tx:ztx,ty:zty}; }
+  zimg.addEventListener("pointerdown",e=>{
+    if(S.scr!=="det") return;
+    zp.set(e.pointerId,zPos(e));
+    if(zp.size===1){ zUsed=zs>1.001; zimg.style.transition=""; if(zUsed){ try{zimg.setPointerCapture(e.pointerId);}catch(_){} zStartPan(zp.get(e.pointerId)); } }
+    else if(zp.size===2){
+      zUsed=true; try{zimg.setPointerCapture(e.pointerId);}catch(_){}
+      const [a,b]=[...zp.values()], mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+      zPinch={d0:Math.hypot(a.x-b.x,a.y-b.y)||1, s0:zs, u:(mx-ztx)/zs, v:(my-(ZFY+zty))/zs};
+      zPan=null;
+    }
+  });
+  zimg.addEventListener("pointermove",e=>{
+    if(!zp.has(e.pointerId)) return;
+    zp.set(e.pointerId,zPos(e));
+    if(zp.size>=2&&zPinch){
+      const [a,b]=[...zp.values()], mx=(a.x+b.x)/2, my=(a.y+b.y)/2, d=Math.hypot(a.x-b.x,a.y-b.y);
+      zs=Math.max(1,Math.min(ZMAX,zPinch.s0*d/zPinch.d0));
+      ztx=mx-zPinch.u*zs; zty=my-zPinch.v*zs-ZFY;
+      zApply();
+    } else if(zp.size===1&&zPan&&zs>1.001){
+      const p=zp.get(e.pointerId);
+      ztx=zPan.tx+(p.x-zPan.x); zty=zPan.ty+(p.y-zPan.y);
+      zApply();
+    }
+  });
+  function zUp(e){
+    if(!zp.has(e.pointerId)) return;
+    zp.delete(e.pointerId);
+    if(zp.size===1&&zs>1.001){ zPinch=null; zStartPan([...zp.values()][0]); }
+    else if(zp.size===0){
+      zPinch=null; zPan=null;
+      if(zs<1.05) zReset(true);
+    }
+  }
+  ["pointerup","pointercancel"].forEach(ev=>zimg.addEventListener(ev,zUp));
+  ["gesturestart","gesturechange"].forEach(ev=>zimg.addEventListener(ev,e=>e.preventDefault(),{passive:false}));   // Safari: không cho phóng to cả trang
 
   /* ---------- API ---------- */
   window.WD={
