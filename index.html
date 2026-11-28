@@ -20,6 +20,10 @@ html.wd-lock,body.wd-lock{position:fixed;left:0;right:0;top:0;bottom:0;width:100
 body.safari-cover{background:#22324B}
 body.safari-home{background:#FFFEF9}
 html.safari-tab,body.safari-tab{background:#FFFEF9}
+/* dải màu cố định sát mép trên/dưới (nằm sau nội dung): Safari lấy màu thanh trạng thái / thanh công cụ từ đây = màu nền trang (hoặc màu ảnh khi zoom) */
+body.safari-tab::before,body.safari-tab::after{content:"";position:fixed;left:0;right:0;height:64px;z-index:-1;pointer-events:none;background:var(--bar,#FFFEF9)}
+body.safari-tab::before{top:0}
+body.safari-tab::after{bottom:0}
 #app.safari-tab #v-soon{background:#FFFEF9}   /* Ảnh cưới / Lời chúc / Địa điểm: vùng quanh khung 390x844 (status bar, dưới thanh công cụ) cùng màu nền trang */
 body.safari-shell #app{flex-shrink:0}
 main.screen#app{margin-left:auto;margin-right:auto}   /* centred without flex overflow: never pushed off the left edge */
@@ -2383,6 +2387,7 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('650 11.68px Inter'
       const d=P.document, m=d.getElementById("safariThemeColor");
       if(m) m.setAttribute("content",c||"#FFFEF9");
       d.documentElement.style.backgroundColor=c||""; d.body.style.backgroundColor=c||"";
+      if(c) d.documentElement.style.setProperty("--bar",c); else d.documentElement.style.removeProperty("--bar");
     }catch(_){}
   }
   function zApply(){
