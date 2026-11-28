@@ -89,6 +89,7 @@ html:has(#v-cover.on),body:has(#v-cover.on),html:has(#v-home.on),body:has(#v-hom
 #v-home .hbeat{transform-box:fill-box;transform-origin:center;animation:hbeat 1.25s ease-in-out infinite}
 #hcar{position:absolute;left:0;top:258.52px;width:390px;height:354.8px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
 #hcar.drag{cursor:grabbing}
+#homeSvg,#hcar{translate:0 var(--home-dy,0px);transition:translate .2s ease-out}   /* Home content moves up when the browser bars leave less room (see homeFit) */
 #v-home.hgate #homeSvg,#v-home.hgate #hcar{pointer-events:none}   /* Home content fades in while the Home pill opens (opacity set from JS) */
 #hcar .hc{position:absolute;left:0;top:0;width:260.67px;overflow:hidden;background-size:cover;background-position:center;will-change:transform,filter;pointer-events:none}
 
@@ -1448,6 +1449,29 @@ function coverGo(){
   cta.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); downT=performance.now(); go(); } });
   new MutationObserver(()=>{ if(cover.classList.contains("on")) play(); else stop(); }).observe(cover,{attributes:true,attributeFilter:["class"]});
   if(cover.classList.contains("on")) play();
+})();
+/* Home fit: the design measures the space above the header from the very top edge of the screen. When the browser bars leave less room
+   (tab bar rides up above the toolbar), the whole Home content moves up so the caption is not covered; it never goes higher than
+   16px below the top of the page (or below the status bar when the page runs under it). */
+(function(){
+  const home=document.getElementById("v-home"), nav=document.getElementById("navwrap");
+  const probe=document.createElement("div"); probe.style.cssText="position:fixed;left:0;top:0;width:1px;height:0;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px)";
+  document.body.appendChild(probe);
+  const TOP=67.1, CLEAR=16, BOTTOM_NEED=657;   // top of the VN|EN ticket · min gap under the page top · bottom of the caption + gap above the tab bar
+  let last=null;
+  function fit(){
+    if(!home.classList.contains("on")) return;
+    const sat=parseFloat(getComputedStyle(probe).paddingTop)||0;
+    const nv=parseFloat((nav.style.translate||"").split(" ")[1])||0;   // tab bar shift (<=0)
+    const need=BOTTOM_NEED-(CAP_TOP+nv), maxUp=Math.max(0,TOP-(sat+CLEAR));
+    const dy=-Math.max(0,Math.min(need,maxUp));
+    if(last===null||Math.abs(dy-last)>0.25){ last=dy; home.style.setProperty("--home-dy",dy.toFixed(1)+"px"); }
+  }
+  const vv=window.visualViewport;
+  window.addEventListener("resize",fit,{passive:true}); window.addEventListener("orientationchange",fit);
+  if(vv){ vv.addEventListener("resize",fit,{passive:true}); vv.addEventListener("scroll",fit,{passive:true}); }
+  new MutationObserver(fit).observe(home,{attributes:true,attributeFilter:["class"]});
+  setInterval(fit,300); fit();
 })();
 /* Safari: no accidental page zoom (pinch / double tap) while the non-scrolling Cover or Home is up, so the 390px artboard always shows at 100%.
    Add ?debug to the address to see a small readout (viewport size, zoom scale) in the top-left corner. */
