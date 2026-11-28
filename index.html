@@ -16,10 +16,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* Safari shell: edge-to-edge background is enabled only on the non-scrolling Cover and Home.
    The inner 390x844 artboard is deliberately preserved so existing artwork/layout does not shift. */
 body.safari-shell{min-height:100vh;min-height:100dvh;overscroll-behavior:none}
-body.wd-cream,html.wd-lock{background:#FFFEF9}
 html.wd-lock,body.wd-lock{position:fixed;left:0;right:0;top:0;bottom:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:none}
 body.safari-cover{background:#22324B}
 body.safari-home{background:#FFFEF9}
+body.safari-tab{background:#FFFEF9}   /* Ảnh cưới / Lời chúc / Địa điểm: vùng quanh khung 390x844 (status bar, dưới thanh công cụ) cùng màu nền trang */
 body.safari-shell #app{flex-shrink:0}
 main.screen#app{margin-left:auto;margin-right:auto}   /* centred without flex overflow: never pushed off the left edge */
 .screen{position:relative;width:390px;max-width:100vw;height:844px;overflow:hidden;background:#22324B;color:var(--cream)}
@@ -27,6 +27,7 @@ main.screen#app{margin-left:auto;margin-right:auto}   /* centred without flex ov
 .screen.safari-home{background:#FFFEF9}
 #app.screen{background:#22324B!important}
 #app.screen.safari-cover{background:#22324B!important}
+#app.screen.safari-tab{background:#FFFEF9!important}
 #v-cover{background:#22324B!important}
 .view{position:absolute;inset:0;display:none}
 .view.on{display:block}
@@ -554,9 +555,13 @@ function show(name){
     document.body.classList.toggle("safari-home",name==="home");
     app.classList.toggle("safari-cover",name==="cover");
     app.classList.toggle("safari-home",name==="home");
+    const isTab=(name==="wedding"||name==="wishes"||name==="location");
+    document.body.classList.toggle("safari-tab",isTab);
+    app.classList.toggle("safari-tab",isTab);
     const safariTheme=document.getElementById("safariThemeColor");
     if(safariTheme){
       if(isSafariShell) safariTheme.setAttribute("content","#FFFAEC");
+      else if(isTab) safariTheme.setAttribute("content","#FFFEF9");
       else safariTheme.removeAttribute("content");
     }
   }
@@ -1547,7 +1552,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .wd-card.pressing{transform:scale(.975);transition:transform .1s ease-out}
 
 /* ---- Gallery ---- */
-.wd-gt{position:absolute;left:0;right:0;top:45.1px;text-align:center;font:600 33.2px/40px var(--mono);letter-spacing:-.04em}
+.wd-gt{position:absolute;left:0;right:0;top:16.2px;text-align:center;font:600 33.2px/40px var(--mono);letter-spacing:-.04em}
 .wd-gc{position:absolute;left:30.8px;width:328.4px;height:191.6px;border-radius:4.98px;background:#666;overflow:hidden;cursor:pointer}
 .wd-gc img,.wd-th img,.wd-card img,.wd-img img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .wd-gcap{position:absolute;left:0;right:0;text-align:center;font:600 21.4px/26px var(--sans)}
@@ -1556,13 +1561,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* ---- Header (← + tiêu đề) ---- */
 #wd-head{position:absolute;z-index:60;left:0;right:0;top:0;height:141px;opacity:0;pointer-events:none;transition:opacity .3s ease}
 .wd-s-main #wd-head,.wd-s-det #wd-head{opacity:1}
-.wd-back{position:absolute;left:27.6px;top:50.6px;width:26.3px;--h:24.1px;pointer-events:none}
+.wd-back{position:absolute;left:27.6px;top:21.7px;width:26.3px;--h:24.1px;pointer-events:none}
 .wd-s-main .wd-back,.wd-s-det .wd-back{pointer-events:auto}
 .wd-back svg{position:absolute;left:6.8px;top:5.1px}
-.wd-title{position:absolute;left:60px;right:60px;top:52.2px;text-align:center;font:600 26.1px/28px var(--mono);white-space:nowrap}
+.wd-title{position:absolute;left:60px;right:60px;top:23.3px;text-align:center;font:600 26.1px/28px var(--mono);white-space:nowrap}
 
 /* ---- Tab Từng ảnh / Cả bộ ---- */
-.wd-tab{position:absolute;top:102px;width:87.529px;height:24.41px;display:flex;align-items:center;justify-content:center;font:600 14.6px/1 var(--mono);letter-spacing:-.06em;color:#333;white-space:nowrap}
+.wd-tab{position:absolute;top:73.1px;width:87.529px;height:24.41px;display:flex;align-items:center;justify-content:center;font:600 14.6px/1 var(--mono);letter-spacing:-.06em;color:#333;white-space:nowrap}
 .wd-tab>span{position:relative;top:.57px}
 .wd-tab.off{color:#999}
 .wd-tab .wd-tb{position:absolute;left:0;top:0;pointer-events:none;shape-rendering:geometricPrecision}
@@ -1579,20 +1584,20 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .wd-card{position:absolute;overflow:hidden;transition:left .55s var(--wd-e),top .55s var(--wd-e),width .55s var(--wd-e),height .55s var(--wd-e),border-radius .55s var(--wd-e),background-color .55s var(--wd-e),opacity .4s ease,transform .42s cubic-bezier(.34,1.56,.64,1)}
 .wd-card.nt{transition:none}
 .wd-tint{position:absolute;inset:0;background:#FFFEF9;opacity:0;transition:opacity .55s var(--wd-e)}
-#wd-stage{position:absolute;left:0;top:190px;width:390px;height:330px;touch-action:pan-y}
+#wd-stage{position:absolute;left:0;top:161.1px;width:390px;height:330px;touch-action:pan-y}
 .wd-chev{position:absolute;width:44px;height:60px;display:flex;align-items:center;justify-content:center;z-index:30}
-#wd-cl{left:32px;top:288.8px}#wd-cr{left:217px;top:288.8px}
-.wd-track{position:absolute;left:28.1px;top:493.2px;width:333.8px;height:3.35px;border-radius:1.7px;background:#B3B3B3}
+#wd-cl{left:32px;top:259.9px}#wd-cr{left:217px;top:259.9px}
+.wd-track{position:absolute;left:28.1px;top:464.3px;width:333.8px;height:3.35px;border-radius:1.7px;background:#B3B3B3}
 .wd-thumb{position:absolute;left:0;top:0;height:3.35px;width:10.13px;border-radius:1.7px;background:#666;transition:left .55s var(--wd-e)}
 .wd-viewing{position:absolute;width:69.6px;--h:19.4px;--bg:#333;color:var(--wd-y);display:flex;align-items:center;justify-content:center;font:600 13px/1 var(--mono);white-space:nowrap}
 .wd-num{position:absolute;font:750 67.8px/68px "WD Inter Tight","Inter",system-ui,sans-serif;letter-spacing:.02em}
 #wd.wd-faketight .wd-num{letter-spacing:-0.031em}
 .wd-pt{position:absolute;font:600 22.7px/28px var(--sans);white-space:nowrap}
-.wd-open{position:absolute;right:28.1px;top:538.2px;width:138.4px;--h:38.6px;display:flex;align-items:center;justify-content:center;font:600 17.8px/1 var(--mono);color:#333;white-space:nowrap}
+.wd-open{position:absolute;right:28.1px;top:509.3px;width:138.4px;--h:38.6px;display:flex;align-items:center;justify-content:center;font:600 17.8px/1 var(--mono);color:#333;white-space:nowrap}
 .wd-open>span{top:-.44px}
 .wd-like{position:absolute;right:28.1px;--bg:#333;display:flex;align-items:center;justify-content:flex-start;color:var(--wd-y);font-family:var(--mono);white-space:nowrap}
-.wd-like.sm{top:584.2px;--h:38.51px;min-width:70.32px;padding:0 15px 0 16.6px;gap:9.65px;font-size:19.6px;line-height:1}
-.wd-like.lg{top:687.8px;--h:53.12px;min-width:97px;padding:0 20.7px 0 22.9px;gap:13.4px;font-size:27px;line-height:1}
+.wd-like.sm{top:555.3px;--h:38.51px;min-width:70.32px;padding:0 15px 0 16.6px;gap:9.65px;font-size:19.6px;line-height:1}
+.wd-like.lg{top:641.4px;--h:53.12px;min-width:97px;padding:0 20.7px 0 22.9px;gap:13.4px;font-size:27px;line-height:1}
 .wd-like svg{flex:none}
 .wd-like svg path{fill:transparent;transition:fill .25s ease}
 .wd-like.has svg path{fill:var(--wd-y)}
@@ -1604,7 +1609,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* ---- Grid Cả bộ ---- */
 #wd-gal,#wd-gal *,#wd-det,#wd-det *,#wd-car,#wd-car *,#wd-stage,#wd-img{touch-action:none!important}
 #wd-gridscroll{touch-action:pan-y!important}
-#wd-gridscroll{position:absolute;left:0;right:0;top:146.95px;bottom:0;overflow-y:hidden;overflow-x:hidden;touch-action:pan-y;padding:20.55px 30.8px 140px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#wd-gridscroll{position:absolute;left:0;right:0;top:118.05px;bottom:0;overflow-y:hidden;overflow-x:hidden;touch-action:pan-y;padding:20.55px 30.8px 140px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 #wd-gridscroll::-webkit-scrollbar{display:none}
 .wd-v-grid #wd-gridscroll{overflow-y:auto}   /* only the "Cả bộ" grid scrolls */
 .wd-gridin{display:grid;grid-template-columns:repeat(3,103.6px);column-gap:8.8px;row-gap:43px}
@@ -1615,8 +1620,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .wd-gfade{position:absolute;left:0;right:0;bottom:0;height:219px;pointer-events:none;background:linear-gradient(to bottom,rgba(255,254,249,0) 0%,rgba(255,254,249,.11) 6.8%,rgba(255,254,249,.26) 16%,rgba(255,254,249,.405) 25.1%,rgba(255,254,249,.536) 34.2%,rgba(255,254,249,.65) 43.4%,rgba(255,254,249,.75) 52.5%,rgba(255,254,249,.83) 61.6%,#FFFEF9 75.3%,#FFFEF9 100%)}
 
 /* ---- Chi tiết ảnh ---- */
-.wd-img{position:absolute;left:0;top:141px;width:390px;height:703px;background:#666;overflow:hidden;touch-action:pan-y}
-.wd-shade{position:absolute;left:0;top:141px;width:390px;height:703px;pointer-events:none;transition:opacity .3s ease;background:linear-gradient(to bottom,rgba(0,0,0,0) 56.8%,rgba(0,0,0,.029) 63.7%,rgba(0,0,0,.069) 71.7%,rgba(0,0,0,.137) 79.7%,rgba(0,0,0,.225) 87.6%,rgba(0,0,0,.343) 95.6%,rgba(0,0,0,.402) 100%)}
+.wd-img{position:absolute;left:0;top:77.9px;width:390px;height:741.8px;background:#666;overflow:hidden;touch-action:pan-y}
+.wd-shade{position:absolute;left:0;top:77.9px;width:390px;height:741.8px;pointer-events:none;transition:opacity .3s ease;background:linear-gradient(to bottom,rgba(0,0,0,0) 56.8%,rgba(0,0,0,.029) 63.7%,rgba(0,0,0,.069) 71.7%,rgba(0,0,0,.137) 79.7%,rgba(0,0,0,.225) 87.6%,rgba(0,0,0,.343) 95.6%,rgba(0,0,0,.402) 100%)}
 .wd-ph{position:absolute;inset:0;will-change:transform}
 /* cửa sổ số: mực cao 51px (y 8.5→59.4 trong dòng 68px); đường cắt trên cách mực 7px (cách Viewing 8.3px), đường cắt dưới cách mực 6px (cách tên ảnh 6.2px) */
 .wd-odo{display:flex;height:63.9px;margin-top:1.5px}
@@ -1625,9 +1630,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .wd-os i{display:block;flex:none;height:68px;line-height:68px;font-style:normal}
 .wd-dui{transition:opacity .3s ease}
 #wd.wd-ui-off .wd-dui{opacity:0;pointer-events:none}
-.wd-x{position:absolute;left:326.5px;top:167.2px;width:33.79px;--h:30.91px}
+.wd-x{position:absolute;left:326.5px;top:99.8px;width:33.79px;--h:30.91px}
 .wd-x svg{position:absolute;left:11px;top:9.6px}
-#wd-dcl{left:16.7px;top:392px}#wd-dcr{left:330px;top:392px}
+#wd-dcl{left:16.7px;top:280.8px}#wd-dcr{left:330px;top:280.8px}
 .wd-tbl{position:absolute;inset:0;pointer-events:none;color:var(--wd-cream);font:600 8.5px/10px var(--mono)}
 .wd-tl,.wd-tv{position:absolute;white-space:nowrap}
 .wd-tl{left:30px}.wd-tv{right:203.31px;text-align:right}
@@ -1653,12 +1658,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
       <div class="wd-scr" id="wd-gal">
         <div class="wd-gt">Our Gallery</div>
-        <div class="wd-gc" id="wd-gc1" data-wd-open="wedding" style="top:118.6px"></div>
-        <div class="wd-gcap" id="wd-gcap1" style="top:326.9px"></div>
-        <div class="wd-gsub" id="wd-gsub1" style="top:358.2px"></div>
-        <div class="wd-gc" id="wd-gc2" data-wd-open="story" style="top:404.5px"></div>
-        <div class="wd-gcap" id="wd-gcap2" style="top:611.5px"></div>
-        <div class="wd-gsub" id="wd-gsub2" style="top:642.8px"></div>
+        <div class="wd-gc" id="wd-gc1" data-wd-open="wedding" style="top:89.7px"></div>
+        <div class="wd-gcap" id="wd-gcap1" style="top:298px"></div>
+        <div class="wd-gsub" id="wd-gsub1" style="top:329.3px"></div>
+        <div class="wd-gc" id="wd-gc2" data-wd-open="story" style="top:375.6px"></div>
+        <div class="wd-gcap" id="wd-gcap2" style="top:582.6px"></div>
+        <div class="wd-gsub" id="wd-gsub2" style="top:613.9px"></div>
       </div>
 
       <div id="wd-head">
@@ -1675,9 +1680,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
           <button class="wd-chev" id="wd-cl" aria-label="Previous"><svg width="15.77" height="30.16" viewBox="0 0 15.77 30.16" style="margin:-0.22px -0.22px"><path d="M15.26 0.45 C14.78 0.0 14.04 0.03 13.59 0.51 L0.0 15.14 L13.59 29.78 C13.82 30.03 14.14 30.16 14.46 30.16 C14.75 30.16 15.04 30.05 15.26 29.84 C15.74 29.4 15.77 28.65 15.33 28.17 L3.23 15.14 L15.33 2.12 C15.77 1.64 15.74 0.89 15.26 0.45" fill="#E6E6E6"/></svg></button>
           <button class="wd-chev" id="wd-cr" aria-label="Next"><svg width="15.77" height="30.16" viewBox="0 0 15.77 30.16" style="margin:-0.22px -0.22px"><path d="M2.18 0.51 C1.74 0.03 0.99 0.0 0.51 0.44 C0.03 0.89 0.0 1.64 0.44 2.12 L12.54 15.14 L0.44 28.17 C0.0 28.65 0.03 29.4 0.51 29.84 C0.73 30.05 1.02 30.16 1.31 30.16 C1.63 30.16 1.95 30.03 2.18 29.78 L15.77 15.14 Z" fill="#E6E6E6"/></svg></button>
           <div class="wd-track"><div class="wd-thumb" id="wd-thumb"></div></div>
-          <div class="wd-tk wd-viewing" style="left:28.8px;top:538.2px"><span id="wd-viewing"></span></div>
-          <div class="wd-num" id="wd-num" style="left:28.1px;top:564.5px"></div>
-          <div class="wd-pt" id="wd-pt" style="left:28.1px;top:632.3px"></div>
+          <div class="wd-tk wd-viewing" style="left:28.8px;top:509.3px"><span id="wd-viewing"></span></div>
+          <div class="wd-num" id="wd-num" style="left:28.1px;top:535.6px"></div>
+          <div class="wd-pt" id="wd-pt" style="left:28.1px;top:603.4px"></div>
           <button class="wd-tk wd-open" id="wd-open"><span></span></button>
           <button class="wd-tk wd-like sm" data-like aria-label="Like"><svg width="18.34" height="16.9" viewBox="0 0 18.34 16.9" style="margin:-0.00px -0.38px" fill="none" stroke="#F6E600" stroke-width="1.97" stroke-linejoin="round"><path d="M18.34 5.11 C18.34 6.31 18.01 7.53 17.38 8.63 C16.27 10.57 14.03 13.54 9.64 16.67 L9.32 16.9 L8.99 16.67 C4.61 13.54 2.36 10.57 1.25 8.63 C0.18 6.77 0.0 4.55 0.77 2.7 C1.5 0.93 2.78 0.0 4.46 0.0 C7.18 0.0 8.64 1.06 9.32 1.79 C10.0 1.06 11.45 0.0 14.17 0.0 C15.86 0.0 17.13 0.93 17.87 2.7 C18.18 3.46 18.34 4.28 18.34 5.11 Z"/></svg><span class="wd-cnt">0</span></button>
         </div>
@@ -1694,14 +1699,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
         <button class="wd-chev wd-dui" id="wd-dcl" aria-label="Previous"><svg width="15.77" height="30.16" viewBox="0 0 15.77 30.16" style="margin:-0.22px -0.22px"><path d="M15.26 0.45 C14.78 0.0 14.04 0.03 13.59 0.51 L0.0 15.14 L13.59 29.78 C13.82 30.03 14.14 30.16 14.46 30.16 C14.75 30.16 15.04 30.05 15.26 29.84 C15.74 29.4 15.77 28.65 15.33 28.17 L3.23 15.14 L15.33 2.12 C15.77 1.64 15.74 0.89 15.26 0.45" fill="#E6E6E6"/></svg></button>
         <button class="wd-chev wd-dui" id="wd-dcr" aria-label="Next"><svg width="15.77" height="30.16" viewBox="0 0 15.77 30.16" style="margin:-0.22px -0.22px"><path d="M2.18 0.51 C1.74 0.03 0.99 0.0 0.51 0.44 C0.03 0.89 0.0 1.64 0.44 2.12 L12.54 15.14 L0.44 28.17 C0.0 28.65 0.03 29.4 0.51 29.84 C0.73 30.05 1.02 30.16 1.31 30.16 C1.63 30.16 1.95 30.03 2.18 29.78 L15.77 15.14 Z" fill="#E6E6E6"/></svg></button>
         <button class="wd-tk wd-x wd-dui" id="wd-x" aria-label="Close"><svg width="11.8" height="11.8" viewBox="0 0 11.8 11.8" fill="none" stroke="#121212" stroke-width="2.63"><path d="M0 0L11.8 11.8M11.8 0L0 11.8"/></svg></button>
-        <div class="wd-tk wd-viewing wd-dui" id="wd-view2" style="left:31.4px;top:529.3px"><span id="wd-viewing2"></span></div>
-        <div class="wd-num wd-cream wd-dui" id="wd-num2" style="left:30.7px;top:555.6px"></div>
-        <div class="wd-pt wd-cream wd-dui" id="wd-pt2" style="left:30.7px;top:623.4px"></div>
+        <div class="wd-tk wd-viewing wd-dui" id="wd-view2" style="left:31.4px;top:482.9px"><span id="wd-viewing2"></span></div>
+        <div class="wd-num wd-cream wd-dui" id="wd-num2" style="left:30.7px;top:509.2px"></div>
+        <div class="wd-pt wd-cream wd-dui" id="wd-pt2" style="left:30.7px;top:577px"></div>
         <div class="wd-tbl wd-dui">
-          <span class="wd-tl" data-r="0" style="top:665.41px">Album</span><span class="wd-tv" id="wd-album" data-r="0" style="top:665.41px"></span><svg class="wd-ln" data-r="0" style="top:679.839px" width="156.29" height="1" viewBox="0 0 156.29 1"><line x1="0" y1=".5" x2="156.29" y2=".5" stroke="#FFFBF2" stroke-width=".247" stroke-dasharray=".6565 .65" stroke-dashoffset=".3265"/></svg>
-          <span class="wd-tl" data-r="1" style="top:686.54px">Position</span><span class="wd-tv" id="wd-pos" data-r="1" style="top:686.54px"></span><svg class="wd-ln" data-r="1" style="top:700.112px" width="156.29" height="1" viewBox="0 0 156.29 1"><line x1="0" y1=".5" x2="156.29" y2=".5" stroke="#FFFBF2" stroke-width=".247" stroke-dasharray=".6565 .65" stroke-dashoffset=".3265"/></svg>
-          <span class="wd-tl" data-r="2" style="top:707.66px">Date</span><span class="wd-tv" id="wd-date" data-r="2" style="top:707.66px"></span><svg class="wd-ln" data-r="2" style="top:720.385px" width="156.29" height="1" viewBox="0 0 156.29 1"><line x1="0" y1=".5" x2="156.29" y2=".5" stroke="#FFFBF2" stroke-width=".247" stroke-dasharray=".6565 .65" stroke-dashoffset=".3265"/></svg>
-          <span class="wd-tl" data-r="3" style="top:728.82px">Place</span><span class="wd-tv" id="wd-place" data-r="3" style="top:728.82px"></span><svg class="wd-ln" data-r="3" style="top:740.658px" width="156.29" height="1" viewBox="0 0 156.29 1"><line x1="0" y1=".5" x2="156.29" y2=".5" stroke="#FFFBF2" stroke-width=".247" stroke-dasharray=".6565 .65" stroke-dashoffset=".3265"/></svg>
+          <span class="wd-tl" data-r="0" style="top:619.01px">Album</span><span class="wd-tv" id="wd-album" data-r="0" style="top:619.01px"></span><svg class="wd-ln" data-r="0" style="top:633.439px" width="156.29" height="1" viewBox="0 0 156.29 1"><line x1="0" y1=".5" x2="156.29" y2=".5" stroke="#FFFBF2" stroke-width=".247" stroke-dasharray=".6565 .65" stroke-dashoffset=".3265"/></svg>
+          <span class="wd-tl" data-r="1" style="top:640.14px">Position</span><span class="wd-tv" id="wd-pos" data-r="1" style="top:640.14px"></span><svg class="wd-ln" data-r="1" style="top:653.712px" width="156.29" height="1" viewBox="0 0 156.29 1"><line x1="0" y1=".5" x2="156.29" y2=".5" stroke="#FFFBF2" stroke-width=".247" stroke-dasharray=".6565 .65" stroke-dashoffset=".3265"/></svg>
+          <span class="wd-tl" data-r="2" style="top:661.26px">Date</span><span class="wd-tv" id="wd-date" data-r="2" style="top:661.26px"></span><svg class="wd-ln" data-r="2" style="top:673.985px" width="156.29" height="1" viewBox="0 0 156.29 1"><line x1="0" y1=".5" x2="156.29" y2=".5" stroke="#FFFBF2" stroke-width=".247" stroke-dasharray=".6565 .65" stroke-dashoffset=".3265"/></svg>
+          <span class="wd-tl" data-r="3" style="top:682.42px">Place</span><span class="wd-tv" id="wd-place" data-r="3" style="top:682.42px"></span><svg class="wd-ln" data-r="3" style="top:694.258px" width="156.29" height="1" viewBox="0 0 156.29 1"><line x1="0" y1=".5" x2="156.29" y2=".5" stroke="#FFFBF2" stroke-width=".247" stroke-dasharray=".6565 .65" stroke-dashoffset=".3265"/></svg>
         </div>
         <button class="wd-tk wd-like lg wd-dui" id="wd-like2" data-like aria-label="Like"><svg width="25.29" height="23.31" viewBox="0 0 25.29 23.31" style="margin:-0.00px -0.53px" fill="none" stroke="#F6E600" stroke-width="1.97" stroke-linejoin="round"><path d="M25.29 7.05 C25.29 8.7 24.85 10.39 23.98 11.9 C22.44 14.57 19.34 18.67 13.3 22.99 L12.85 23.31 L12.4 22.99 C6.36 18.67 3.26 14.57 1.73 11.9 C0.25 9.33 0.0 6.27 1.06 3.72 C2.07 1.29 3.83 0.0 6.15 0.0 C9.91 0.0 11.91 1.46 12.85 2.47 C13.79 1.46 15.79 0.0 19.55 0.0 C21.87 0.0 23.63 1.29 24.64 3.72 C25.08 4.77 25.29 5.9 25.29 7.05 Z"/></svg><span class="wd-cnt">0</span></button>
       </div>
@@ -3698,12 +3703,9 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
     catcher.style.visibility=hide?'hidden':'';
   },40);
   setTimeout(function(){ frameFor('wishes'); frameFor('wedding'); frameFor('location'); },1500);
-  var _show=show, TC0=(document.getElementById('safariThemeColor')||{getAttribute:function(){return null;}}).getAttribute('content');
+  var _show=show;
   show=function(name){ _show(name); sync(name);
-    var lock=(name==='wedding'); document.documentElement.classList.toggle('wd-lock',lock); document.body.classList.toggle('wd-lock',lock);
-    var tc=document.getElementById('safariThemeColor');
-    if(tc) tc.setAttribute('content', lock?'#FFFEF9':(TC0||'#22324B'));
-    document.body.classList.toggle('wd-cream',lock); };
+    var lock=(name==='wedding'); document.documentElement.classList.toggle('wd-lock',lock); document.body.classList.toggle('wd-lock',lock); };
 })();
 </script>
 </body>
