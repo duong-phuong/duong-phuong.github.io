@@ -1646,6 +1646,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* zoom 2 ngón ở Chi tiết: ẩn nút/tiêu đề, ảnh tràn màn hình */
 #wd.wd-zm .wd-dui,#wd.wd-zm #wd-head{opacity:0;pointer-events:none}
 #wd.wd-zm .wd-back{pointer-events:none}
+#wd.wd-zm.wd-zx #wd-x{opacity:1;pointer-events:auto}
 
 /* ẩn thanh tab khi xem chi tiết (CSS riêng, không đụng code thanh tab) */
 #app.wd-full #navwrap{opacity:0;pointer-events:none}
@@ -1665,12 +1666,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
       <div class="wd-scr" id="wd-gal">
         <div class="wd-gt">Our Gallery</div>
-        <div class="wd-gc" id="wd-gc1" data-wd-open="wedding" style="top:89.7px"></div>
-        <div class="wd-gcap" id="wd-gcap1" style="top:298px"></div>
-        <div class="wd-gsub" id="wd-gsub1" style="top:329.3px"></div>
-        <div class="wd-gc" id="wd-gc2" data-wd-open="story" style="top:375.6px"></div>
-        <div class="wd-gcap" id="wd-gcap2" style="top:582.6px"></div>
-        <div class="wd-gsub" id="wd-gsub2" style="top:613.9px"></div>
+        <div class="wd-gc" id="wd-gc1" data-wd-open="wedding" style="top:79.7px"></div>
+        <div class="wd-gcap" id="wd-gcap1" style="top:288px"></div>
+        <div class="wd-gsub" id="wd-gsub1" style="top:319.3px"></div>
+        <div class="wd-gc" id="wd-gc2" data-wd-open="story" style="top:365.6px"></div>
+        <div class="wd-gcap" id="wd-gcap2" style="top:572.6px"></div>
+        <div class="wd-gsub" id="wd-gsub2" style="top:603.9px"></div>
       </div>
 
       <div id="wd-head">
@@ -2358,11 +2359,11 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('650 11.68px Inter'
     const r=$("wd-stage").getBoundingClientRect(), x=(e.clientX-r.left)*390/r.width;
     if(x>=27.2&&x<=266.9) openDet("car"); else if(x>266.9) step(1); else step(-1);
   });
-  gesture($("wd-img"),()=>{ if(!zBlock()) step(1); },()=>{ if(!zBlock()) step(-1); },()=>{ if(zBlock()) return; S.ui=!S.ui; paint(); });   // chạm ảnh: ẩn/hiện nút
+  gesture($("wd-img"),()=>{ if(!zBlock()) step(1); },()=>{ if(!zBlock()) step(-1); },(e)=>{ if(zBlock()) return; zTap(e); });   // chạm ảnh: ẩn/hiện nút
 
   /* ---------- ZOOM 2 NGÓN (Chi tiết): chụm/nở để phóng to tràn màn hình, 1 ngón kéo ảnh ---------- */
   const ZFY=77.9, ZFH=741.8, ZMAX=5;
-  let zs=1, ztx=0, zty=0, zUsed=false, zPinch=null, zPan=null;
+  let zs=1, ztx=0, zty=0, zUsed=false, zPinch=null, zPan=null, zTapOK=false, zT0=0, zP0=null;
   const zp=new Map(), zimg=$("wd-img");
   function zBlock(){ return zUsed||zs>1.001; }
   function zClamp(){
@@ -2373,14 +2374,45 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('650 11.68px Inter'
     else { const t=(h-ZFH)/(844-ZFH); T=ZFY*(1-t)+((844-h)/2)*t; }   // chưa phủ kín màn hình: căn dần ra giữa
     zty=T-ZFY;
   }
+  /* màu thanh trạng thái / nền ngoài khung: theo nền đang thấy (kem; khi ảnh zoom tràn màn hình thì theo màu ảnh) */
+  let zBars=null;
+  function zSetBars(c){
+    if(zBars===c) return; zBars=c;
+    try{
+      const P=window.parent; if(!P||P===window) return;
+      const d=P.document, m=d.getElementById("safariThemeColor");
+      if(m) m.setAttribute("content",c||"#FFFEF9");
+      d.documentElement.style.backgroundColor=c||""; d.body.style.backgroundColor=c||"";
+    }catch(_){}
+  }
   function zApply(){
     zClamp();
     zimg.style.transformOrigin="0 0";
     zimg.style.transform=zs>1.001||ztx||zty?"translate("+ztx+"px,"+zty+"px) scale("+zs+")":"";
-    root.classList.toggle("wd-zm",zs>1.001);
+    const on=zs>1.001;
+    root.classList.toggle("wd-zm",on);
+    if(!on) root.classList.remove("wd-zx");
+    zSetBars(on?"#666666":null);
+  }
+  /* chạm 1 lần: ẩn/hiện nút (hoặc nút X khi đang zoom); chạm đúp: zoom nhanh / thu về */
+  let zLast=null, zTapTimer=0;
+  function zTap(e){
+    const p=zPos(e), now=Date.now();
+    if(zLast&&now-zLast.t<300&&Math.hypot(p.x-zLast.x,p.y-zLast.y)<40){ clearTimeout(zTapTimer); zLast=null; zDouble(p); return; }
+    zLast={t:now,x:p.x,y:p.y};
+    clearTimeout(zTapTimer);
+    zTapTimer=setTimeout(()=>{ zLast=null; if(zs>1.001) root.classList.toggle("wd-zx"); else { S.ui=!S.ui; paint(); } },260);
+  }
+  function zDouble(p){
+    zTapOK=false;
+    if(zs>1.001){ zReset(true); return; }
+    zimg.style.transition="transform .3s cubic-bezier(.22,.8,.2,1)"; setTimeout(()=>{ zimg.style.transition=""; },340);
+    zs=2.5; ztx=p.x-p.x*zs; zty=p.y-(p.y-ZFY)*zs-ZFY;
+    root.classList.remove("wd-zx"); S.ui=true;
+    zApply();
   }
   function zReset(anim){
-    zs=1; ztx=0; zty=0; zp.clear(); zPinch=null; zPan=null; zUsed=false;
+    zs=1; ztx=0; zty=0; zp.clear(); zPinch=null; zPan=null; zUsed=false; zTapOK=false; zLast=null; clearTimeout(zTapTimer);
     if(anim){ zimg.style.transition="transform .3s cubic-bezier(.22,.8,.2,1)"; setTimeout(()=>{ zimg.style.transition=""; },340); }
     else zimg.style.transition="";
     zApply();
@@ -2390,9 +2422,9 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('650 11.68px Inter'
   zimg.addEventListener("pointerdown",e=>{
     if(S.scr!=="det") return;
     zp.set(e.pointerId,zPos(e));
-    if(zp.size===1){ zUsed=zs>1.001; zimg.style.transition=""; if(zUsed){ try{zimg.setPointerCapture(e.pointerId);}catch(_){} zStartPan(zp.get(e.pointerId)); } }
+    if(zp.size===1){ zTapOK=true; zT0=Date.now(); zP0=zp.get(e.pointerId); zUsed=zs>1.001; zimg.style.transition=""; if(zUsed){ try{zimg.setPointerCapture(e.pointerId);}catch(_){} zStartPan(zp.get(e.pointerId)); } }
     else if(zp.size===2){
-      zUsed=true; try{zimg.setPointerCapture(e.pointerId);}catch(_){}
+      zUsed=true; zTapOK=false; root.classList.remove("wd-zx"); try{zimg.setPointerCapture(e.pointerId);}catch(_){}
       const [a,b]=[...zp.values()], mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
       zPinch={d0:Math.hypot(a.x-b.x,a.y-b.y)||1, s0:zs, u:(mx-ztx)/zs, v:(my-(ZFY+zty))/zs};
       zPan=null;
@@ -2401,6 +2433,7 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('650 11.68px Inter'
   zimg.addEventListener("pointermove",e=>{
     if(!zp.has(e.pointerId)) return;
     zp.set(e.pointerId,zPos(e));
+    if(zTapOK&&zP0){ const q=zp.get(e.pointerId); if(Math.hypot(q.x-zP0.x,q.y-zP0.y)>10) zTapOK=false; }
     if(zp.size>=2&&zPinch){
       const [a,b]=[...zp.values()], mx=(a.x+b.x)/2, my=(a.y+b.y)/2, d=Math.hypot(a.x-b.x,a.y-b.y);
       zs=Math.max(1,Math.min(ZMAX,zPinch.s0*d/zPinch.d0));
@@ -2418,7 +2451,9 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('650 11.68px Inter'
     if(zp.size===1&&zs>1.001){ zPinch=null; zStartPan([...zp.values()][0]); }
     else if(zp.size===0){
       zPinch=null; zPan=null;
-      if(zs<1.05) zReset(true);
+      if(zs<1.05){ if(zs!==1||zUsed) zReset(true); }
+      else if(zTapOK&&e.type==="pointerup"&&Date.now()-zT0<400) zTap(e);   // đang zoom: chạm 1 lần → hiện/ẩn nút X
+      zTapOK=false;
     }
   }
   ["pointerup","pointercancel"].forEach(ev=>zimg.addEventListener(ev,zUp));
