@@ -2510,7 +2510,9 @@ body{background:#d9d9d9;display:flex;justify-content:center;-webkit-font-smoothi
 .slot{position:absolute;top:0;width:272.08px;height:352px}
 #dtrack{position:absolute;left:0;top:0;width:390px;height:844px;overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none}
 #dstage{position:absolute;left:0;top:0;width:390px;height:844px;will-change:transform}
-.dslide{position:absolute;top:0;width:390px;height:844px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;touch-action:pan-y}
+.dslide{position:absolute;top:0;width:390px;height:844px;overflow-y:hidden;overflow-x:hidden;scrollbar-width:none;touch-action:none;transform:translateY(-40px)}
+#v-form,#v-preview{transform:translateY(-40px)}
+#nameIn,#msgIn,#fileIn,#xName,#xMsg,#xPhoto{margin-top:-40px}   /* the HTML fields and their X buttons move with the page */
 .dslide::-webkit-scrollbar{display:none}
 .dslide svg{display:block}
 .gw{position:absolute;left:0;top:0;width:272.08px;display:flex;flex-direction:column;gap:16px;transform-origin:0 0}
@@ -3520,15 +3522,16 @@ function startSubmitFx(){
     }
     // the cream circle now covers the screen: the success page is shown and the animation is removed
     q('#fxY').setAttribute('r',FX_RF); q('#fxCr').setAttribute('r',FX_RF);
-    Promise.resolve(SEND_P).then(ok=>{
+    const shownOk=()=>{
     f.style.visibility='hidden';
     q('#fxH').setAttribute('fill','#F6E600');
     oldHide.forEach(e=>{ if(e) e.style.opacity=''; });
     q('#fxY').setAttribute('r',0); q('#fxCr').setAttribute('r',0);
     q('#fxTH').removeAttribute('opacity'); q('#fxTG').removeAttribute('opacity');
-    if(ok){ submitWish(); doneButtonRise(); }
-    else { alert('Chưa gửi được lời chúc. '+LAST_ERR); }
-    });
+    submitWish(); doneButtonRise();
+    };
+    shownOk();
+    Promise.resolve(SEND_P).then(ok=>{ if(!ok) alert('Chưa gửi được lời chúc. '+LAST_ERR); });
   };
   requestAnimationFrame(frame);
 }
@@ -3810,14 +3813,21 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
     return false;
   }
   setInterval(function(){
+    var fw=document.getElementById('fr-wishes'), inForm=false;
+    try{ inForm = !!fw && fw.contentWindow.eval('CURRENT_SCREEN')==='form'; }catch(e){}
+    var lockNow = CURRENT==='location' || (CURRENT==='wishes' && !inForm) || CURRENT==='wedding';
+    document.documentElement.classList.toggle('wd-lock',lockNow); document.body.classList.toggle('wd-lock',lockNow);
     var hide=subScreenOpen();
     nav.style.visibility=hide?'hidden':'';
     catcher.style.visibility=hide?'hidden':'';
   },40);
   setTimeout(function(){ frameFor('wishes'); frameFor('wedding'); frameFor('location'); },1500);
-  var _show=show;
+  var _show=show, TC0=(document.getElementById('safariThemeColor')||{getAttribute:function(){return null;}}).getAttribute('content');
   show=function(name){ _show(name); sync(name);
-    var lock=(name==='wedding'); document.documentElement.classList.toggle('wd-lock',lock); document.body.classList.toggle('wd-lock',lock); };
+    var lock=(name==='wedding'); var tc=document.getElementById('safariThemeColor');
+    var THEME={home:'#FFFEF9', wishes:'#FFFEF9', location:'#999999', wedding:'#FFFEF9'};
+    if(tc) tc.setAttribute('content', THEME[name]||(TC0||'#22324B'));
+    document.body.classList.toggle('wd-cream',name==='wedding'); };
 })();
 </script>
 </body>
