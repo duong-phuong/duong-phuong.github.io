@@ -1449,6 +1449,18 @@ function coverGo(){
   new MutationObserver(()=>{ if(cover.classList.contains("on")) play(); else stop(); }).observe(cover,{attributes:true,attributeFilter:["class"]});
   if(cover.classList.contains("on")) play();
 })();
+/* Safari: no accidental page zoom (pinch / double tap) while the non-scrolling Cover or Home is up, so the 390px artboard always shows at 100%.
+   Add ?debug to the address to see a small readout (viewport size, zoom scale) in the top-left corner. */
+(function(){
+  const flat=()=>document.getElementById("v-cover").classList.contains("on")||document.getElementById("v-home").classList.contains("on");
+  ["gesturestart","gesturechange"].forEach(t=>document.addEventListener(t,e=>{ if(flat()) e.preventDefault(); },{passive:false}));
+  if(/[?&]debug\b/.test(location.search)){
+    const d=document.createElement("div"); d.style.cssText="position:fixed;left:6px;top:6px;z-index:99999;background:rgba(0,0,0,.75);color:#fff;font:11px/1.3 monospace;padding:4px 6px;border-radius:4px;pointer-events:none";
+    document.body.appendChild(d);
+    const u=()=>{ const v=window.visualViewport; d.textContent="inner "+innerWidth+"x"+innerHeight+" | vv "+(v?v.width.toFixed(1)+"x"+v.height.toFixed(1)+" scale "+v.scale.toFixed(3):"-")+" | dpr "+devicePixelRatio+" | app "+document.getElementById("app").getBoundingClientRect().width.toFixed(1); };
+    u(); setInterval(u,500);
+  }
+})();
 applyLang();
 show("cover");
 // label widths depend on the loaded font: rebuild the nav model once Inter is ready
