@@ -1553,13 +1553,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* ---- Header (← + tiêu đề) ---- */
 #wd-head{position:absolute;z-index:60;left:0;right:0;top:0;height:141px;opacity:0;pointer-events:none;transition:opacity .3s ease}
 .wd-s-main #wd-head,.wd-s-det #wd-head{opacity:1}
-.wd-back{position:absolute;left:27.6px;top:78.2px;width:26.3px;--h:24.1px;pointer-events:none}
+.wd-back{position:absolute;left:27.6px;top:50.6px;width:26.3px;--h:24.1px;pointer-events:none}
 .wd-s-main .wd-back,.wd-s-det .wd-back{pointer-events:auto}
 .wd-back svg{position:absolute;left:6.8px;top:5.1px}
-.wd-title{position:absolute;left:60px;right:60px;top:78.6px;text-align:center;font:600 26.1px/28px var(--mono);white-space:nowrap}
+.wd-title{position:absolute;left:60px;right:60px;top:52.2px;text-align:center;font:600 26.1px/28px var(--mono);white-space:nowrap}
 
 /* ---- Tab Từng ảnh / Cả bộ ---- */
-.wd-tab{position:absolute;top:129.6033px;width:87.529px;height:24.41px;display:flex;align-items:center;justify-content:center;font:600 14.6px/1 var(--mono);letter-spacing:-.06em;color:#333;white-space:nowrap}
+.wd-tab{position:absolute;top:102px;width:87.529px;height:24.41px;display:flex;align-items:center;justify-content:center;font:600 14.6px/1 var(--mono);letter-spacing:-.06em;color:#333;white-space:nowrap}
 .wd-tab>span{position:relative;top:-.43px}
 .wd-tab.off{color:#999}
 .wd-tab .wd-tb{position:absolute;left:0;top:0;pointer-events:none;shape-rendering:geometricPrecision}
@@ -1599,7 +1599,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 @keyframes wdSw{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 
 /* ---- Grid Cả bộ ---- */
-#wd-gridscroll{position:absolute;left:0;right:0;top:166px;bottom:0;overflow-y:hidden;overflow-x:hidden;padding:36.3px 30.8px 140px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#wd-gridscroll{position:absolute;left:0;right:0;top:146.95px;bottom:0;overflow-y:auto;overflow-x:hidden;padding:20.55px 30.8px 140px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 #wd-gridscroll::-webkit-scrollbar{display:none}
 .wd-gridin{display:grid;grid-template-columns:repeat(3,103.6px);column-gap:8.8px;row-gap:43px}
 .wd-cell{position:relative;height:174.13px;cursor:pointer}
@@ -2381,7 +2381,7 @@ body{background:#d9d9d9;display:flex;justify-content:center;-webkit-font-smoothi
 .caret{animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 /* carousel: every card is the same size; the card in the middle is full size, the others are a little smaller */
-#track{position:absolute;left:0;top:230.81px;width:390px;height:352px;overflow:visible;touch-action:none;cursor:grab;user-select:none}
+#track{position:absolute;left:0;top:207.5px;width:390px;height:352px;overflow:visible;touch-action:none;cursor:grab;user-select:none}
 #track.dragging{cursor:grabbing}
 #stage{position:absolute;left:0;top:0;width:390px;height:352px;will-change:transform}
 .slot{position:absolute;top:0;width:272.08px;height:352px}
@@ -3623,7 +3623,7 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
 <script>
 (function(){
   var SRC={wedding:'src-wedding',wishes:'src-wishes',location:'src-location'};
-  var HIDE='<style>#navwrap,#tabLayer{display:none!important}</style>';
+  var HIDE='<style>#navwrap,#tabLayer{display:none!important}html,body{overflow:hidden!important;overscroll-behavior:none!important}</style>';
   function decode(id){
     return document.getElementById(id).textContent.split('<\\/script').join('</script').split('<\\!--').join('<!--');
   }
@@ -3681,7 +3681,7 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
   (function loopNav(){ placeNav(); requestAnimationFrame(loopNav); })();
   function subScreenOpen(){
     try{
-      if(CURRENT==='wishes'){ var fw=document.getElementById('fr-wishes'); return !!fw && fw.contentWindow.eval('CURRENT_SCREEN')!=='list'; }
+      if(CURRENT==='wishes'){ var fw=document.getElementById('fr-wishes'); return !!fw && (fw.contentWindow.eval('CURRENT_SCREEN')!=='list' || !!fw.contentWindow.eval('MORPHING')); }
       if(CURRENT==='wedding'){ var fd=document.getElementById('fr-wedding'); return !!fd && !!fd.contentDocument && !!fd.contentDocument.querySelector('.wd-full'); }
     }catch(e){}
     return false;
@@ -3690,7 +3690,7 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
     var hide=subScreenOpen();
     nav.style.visibility=hide?'hidden':'';
     catcher.style.visibility=hide?'hidden':'';
-  },200);
+  },40);
   setTimeout(function(){ frameFor('wishes'); frameFor('wedding'); frameFor('location'); },1500);
   var _show=show;
   show=function(name){ _show(name); sync(name); };
