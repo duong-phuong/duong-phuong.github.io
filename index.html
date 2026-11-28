@@ -16,6 +16,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* Safari shell: edge-to-edge background is enabled only on the non-scrolling Cover and Home.
    The inner 390x844 artboard is deliberately preserved so existing artwork/layout does not shift. */
 body.safari-shell{min-height:100vh;min-height:100dvh;overscroll-behavior:none}
+body.wd-cream,html.wd-lock{background:#FFFEF9}
 html.wd-lock,body.wd-lock{position:fixed;left:0;right:0;top:0;bottom:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:none}
 body.safari-cover{background:#22324B}
 body.safari-home{background:#FFFEF9}
@@ -3697,9 +3698,12 @@ document.getElementById('btnGmaps').addEventListener('click',e=>afterPress(e,()=
     catcher.style.visibility=hide?'hidden':'';
   },40);
   setTimeout(function(){ frameFor('wishes'); frameFor('wedding'); frameFor('location'); },1500);
-  var _show=show;
+  var _show=show, TC0=(document.getElementById('safariThemeColor')||{getAttribute:function(){return null;}}).getAttribute('content');
   show=function(name){ _show(name); sync(name);
-    var lock=(name==='wedding'); document.documentElement.classList.toggle('wd-lock',lock); document.body.classList.toggle('wd-lock',lock); };
+    var lock=(name==='wedding'); document.documentElement.classList.toggle('wd-lock',lock); document.body.classList.toggle('wd-lock',lock);
+    var tc=document.getElementById('safariThemeColor');
+    if(tc) tc.setAttribute('content', lock?'#FFFEF9':(TC0||'#22324B'));
+    document.body.classList.toggle('wd-cream',lock); };
 })();
 </script>
 </body>
