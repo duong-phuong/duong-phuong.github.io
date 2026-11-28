@@ -678,7 +678,7 @@ function homeGate(){   // first visit: Home content fades in with the opening of
 const HOME_PHOTOS=[];   // photo URLs go here, e.g. ["img/1.jpg","img/2.jpg",...]; while empty, coloured placeholders are shown
 const HOME_PH=["#E07A5F","#3D85C6","#81B29A","#F2CC8F","#9B72AA"];
 const HC={pos:0,N:0,els:[],raf:0};
-const HC_G={cx:64.95,lx:4.33,rx:124.77,sy:21.51,ch:354.8,sh:311.8,w:260.67,cr:7.4,sr:6.94,blur:3,step:117,sideOp:0.5};   // design 2__Home-2.ai; sideOp = opacity of the photos behind
+const HC_G={cx:64.95,lx:-32.58,rx:161.91,sy:21.51,ch:354.8,sh:311.8,w:260.67,cr:7.4,sr:6.94,blur:3,step:117,sideOp:0.5};   // design 2__Home-2.ai; sideOp = opacity of the photos behind; the side photos run 1/8 of their width past the screen edge (lx/rx) to show there is more to swipe
 function hcLayout(){
   const g=HC_G;
   HC.els.forEach((el,i)=>{
