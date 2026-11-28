@@ -19,6 +19,7 @@ body.safari-shell{min-height:100vh;min-height:100dvh;overscroll-behavior:none}
 body.safari-cover{background:#22324B}
 body.safari-home{background:#FFFEF9}
 body.safari-shell #app{flex-shrink:0}
+main.screen#app{margin-left:auto;margin-right:auto}   /* centred without flex overflow: never pushed off the left edge */
 .screen{position:relative;width:390px;max-width:100vw;height:844px;overflow:hidden;background:#22324B;color:var(--cream)}
 .screen.safari-cover{background:#22324B}
 .screen.safari-home{background:#FFFEF9}
@@ -1502,7 +1503,7 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('650 11.68px Inter'
 :root{--cream:#FFFAEC;--card:#FFFEF9;--card-on:#FFFBF2;--gray:#666;--yellow:#F6E600;--red:#F43C1E;--ink:#121212;--text:#333;--mono:"Cascadia Mono",ui-monospace,monospace;--sans:"Inter",system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{background:#d9d9d9;font-family:var(--sans);display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
+body{background:#d9d9d9;font-family:var(--sans);display:block;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .screen{position:relative;width:390px;max-width:100vw;height:844px;overflow:hidden;background:var(--gray);color:var(--cream)}
 .view{position:absolute;inset:0;display:none}
@@ -1578,17 +1579,17 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .wd-tint{position:absolute;inset:0;background:#FFFEF9;opacity:0;transition:opacity .55s var(--wd-e)}
 #wd-stage{position:absolute;left:0;top:190px;width:390px;height:330px;touch-action:pan-y}
 .wd-chev{position:absolute;width:44px;height:60px;display:flex;align-items:center;justify-content:center;z-index:30}
-#wd-cl{left:32px;top:324px}#wd-cr{left:217px;top:324px}
-.wd-track{position:absolute;left:28.1px;top:532px;width:333.8px;height:3.35px;border-radius:1.7px;background:#B3B3B3}
+#wd-cl{left:32px;top:288.8px}#wd-cr{left:217px;top:288.8px}
+.wd-track{position:absolute;left:28.1px;top:493.2px;width:333.8px;height:3.35px;border-radius:1.7px;background:#B3B3B3}
 .wd-thumb{position:absolute;left:0;top:0;height:3.35px;width:10.13px;border-radius:1.7px;background:#666;transition:left .55s var(--wd-e)}
 .wd-viewing{position:absolute;width:69.6px;--h:19.4px;--bg:#333;color:var(--wd-y);display:flex;align-items:center;justify-content:center;font:600 13px/1 var(--mono);white-space:nowrap}
 .wd-num{position:absolute;font:750 67.8px/68px "WD Inter Tight","Inter",system-ui,sans-serif;letter-spacing:.02em}
 #wd.wd-faketight .wd-num{letter-spacing:-0.031em}
 .wd-pt{position:absolute;font:600 22.7px/28px var(--sans);white-space:nowrap}
-.wd-open{position:absolute;right:28.1px;top:579.3px;width:138.4px;--h:38.6px;display:flex;align-items:center;justify-content:center;font:600 17.8px/1 var(--mono);color:#333;white-space:nowrap}
+.wd-open{position:absolute;right:28.1px;top:538.2px;width:138.4px;--h:38.6px;display:flex;align-items:center;justify-content:center;font:600 17.8px/1 var(--mono);color:#333;white-space:nowrap}
 .wd-open>span{top:-.44px}
 .wd-like{position:absolute;right:28.1px;--bg:#333;display:flex;align-items:center;justify-content:flex-start;color:var(--wd-y);font-family:var(--mono);white-space:nowrap}
-.wd-like.sm{top:625.3px;--h:38.51px;min-width:70.32px;padding:0 15px 0 16.6px;gap:9.65px;font-size:19.6px;line-height:1}
+.wd-like.sm{top:584.2px;--h:38.51px;min-width:70.32px;padding:0 15px 0 16.6px;gap:9.65px;font-size:19.6px;line-height:1}
 .wd-like.lg{top:687.8px;--h:53.12px;min-width:97px;padding:0 20.7px 0 22.9px;gap:13.4px;font-size:27px;line-height:1}
 .wd-like svg{flex:none}
 .wd-like svg path{fill:transparent;transition:fill .25s ease}
@@ -1670,9 +1671,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
           <button class="wd-chev" id="wd-cl" aria-label="Previous"><svg width="15.77" height="30.16" viewBox="0 0 15.77 30.16" style="margin:-0.22px -0.22px"><path d="M15.26 0.45 C14.78 0.0 14.04 0.03 13.59 0.51 L0.0 15.14 L13.59 29.78 C13.82 30.03 14.14 30.16 14.46 30.16 C14.75 30.16 15.04 30.05 15.26 29.84 C15.74 29.4 15.77 28.65 15.33 28.17 L3.23 15.14 L15.33 2.12 C15.77 1.64 15.74 0.89 15.26 0.45" fill="#E6E6E6"/></svg></button>
           <button class="wd-chev" id="wd-cr" aria-label="Next"><svg width="15.77" height="30.16" viewBox="0 0 15.77 30.16" style="margin:-0.22px -0.22px"><path d="M2.18 0.51 C1.74 0.03 0.99 0.0 0.51 0.44 C0.03 0.89 0.0 1.64 0.44 2.12 L12.54 15.14 L0.44 28.17 C0.0 28.65 0.03 29.4 0.51 29.84 C0.73 30.05 1.02 30.16 1.31 30.16 C1.63 30.16 1.95 30.03 2.18 29.78 L15.77 15.14 Z" fill="#E6E6E6"/></svg></button>
           <div class="wd-track"><div class="wd-thumb" id="wd-thumb"></div></div>
-          <div class="wd-tk wd-viewing" style="left:28.8px;top:579.3px"><span id="wd-viewing"></span></div>
-          <div class="wd-num" id="wd-num" style="left:28.1px;top:605.6px"></div>
-          <div class="wd-pt" id="wd-pt" style="left:28.1px;top:673.4px"></div>
+          <div class="wd-tk wd-viewing" style="left:28.8px;top:538.2px"><span id="wd-viewing"></span></div>
+          <div class="wd-num" id="wd-num" style="left:28.1px;top:564.5px"></div>
+          <div class="wd-pt" id="wd-pt" style="left:28.1px;top:632.3px"></div>
           <button class="wd-tk wd-open" id="wd-open"><span></span></button>
           <button class="wd-tk wd-like sm" data-like aria-label="Like"><svg width="18.34" height="16.9" viewBox="0 0 18.34 16.9" style="margin:-0.00px -0.38px" fill="none" stroke="#F6E600" stroke-width="1.97" stroke-linejoin="round"><path d="M18.34 5.11 C18.34 6.31 18.01 7.53 17.38 8.63 C16.27 10.57 14.03 13.54 9.64 16.67 L9.32 16.9 L8.99 16.67 C4.61 13.54 2.36 10.57 1.25 8.63 C0.18 6.77 0.0 4.55 0.77 2.7 C1.5 0.93 2.78 0.0 4.46 0.0 C7.18 0.0 8.64 1.06 9.32 1.79 C10.0 1.06 11.45 0.0 14.17 0.0 C15.86 0.0 17.13 0.93 17.87 2.7 C18.18 3.46 18.34 4.28 18.34 5.11 Z"/></svg><span class="wd-cnt">0</span></button>
         </div>
@@ -2065,9 +2066,9 @@ if(document.fonts&&document.fonts.load){ document.fonts.load('650 11.68px Inter'
   }
 
   /* ---------- CAROUSEL: vị trí/kích thước từng lớp thẻ (đo từ .ai) [x,y,w,h,màu,z,opacity] ---------- */
-  const P={"0":[27.2,202.8,239.73,302.08,"#666666",10,1],"1":[129.9,227.2,187.2,253.2,"#B3B3B3",9,1],
-           "2":[218.5,255,146.1,197.7,"#CCCCCC",8,1],"3":[295.7,278.1,116,151.4,"#D6D4D7",7,1],
-           "-1":[-18,227.2,143.7,253.2,"#B3B3B3",9,1]};
+  const P={"0":[27.2,167.6,239.73,302.08,"#666666",10,1],"1":[129.9,192.0,187.2,253.2,"#B3B3B3",9,1],
+           "2":[218.5,219.8,146.1,197.7,"#CCCCCC",8,1],"3":[295.7,242.9,116,151.4,"#D6D4D7",7,1],
+           "-1":[-18,192.0,143.7,253.2,"#B3B3B3",9,1]};
   const SY=190, TINT={"0":0,"1":.6,"2":.75,"3":.85,"-1":.6};
   function slot(rel){
     if(rel>3) return [P[3][0],P[3][1],P[3][2],P[3][3],P[3][4],6,0];
