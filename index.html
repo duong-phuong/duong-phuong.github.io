@@ -1544,7 +1544,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .wd-card.pressing{transform:scale(.975);transition:transform .1s ease-out}
 
 /* ---- Gallery ---- */
-.wd-gt{position:absolute;left:0;right:0;top:75px;text-align:center;font:600 33.2px/40px var(--mono);letter-spacing:-.04em}
+.wd-gt{position:absolute;left:0;right:0;top:45.1px;text-align:center;font:600 33.2px/40px var(--mono);letter-spacing:-.04em}
 .wd-gc{position:absolute;left:30.8px;width:328.4px;height:191.6px;border-radius:4.98px;background:#666;overflow:hidden;cursor:pointer}
 .wd-gc img,.wd-th img,.wd-card img,.wd-img img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .wd-gcap{position:absolute;left:0;right:0;text-align:center;font:600 21.4px/26px var(--sans)}
@@ -1599,7 +1599,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 @keyframes wdSw{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 
 /* ---- Grid Cả bộ ---- */
-#wd-gridscroll{position:absolute;left:0;right:0;top:166px;bottom:0;overflow-y:auto;overflow-x:hidden;padding:36.3px 30.8px 140px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#wd-gridscroll{position:absolute;left:0;right:0;top:166px;bottom:0;overflow-y:hidden;overflow-x:hidden;padding:36.3px 30.8px 140px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 #wd-gridscroll::-webkit-scrollbar{display:none}
 .wd-gridin{display:grid;grid-template-columns:repeat(3,103.6px);column-gap:8.8px;row-gap:43px}
 .wd-cell{position:relative;height:174.13px;cursor:pointer}
@@ -1647,12 +1647,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
       <div class="wd-scr" id="wd-gal">
         <div class="wd-gt">Our Gallery</div>
-        <div class="wd-gc" id="wd-gc1" data-wd-open="wedding" style="top:158.7px"></div>
-        <div class="wd-gcap" id="wd-gcap1" style="top:367px"></div>
-        <div class="wd-gsub" id="wd-gsub1" style="top:398.3px"></div>
-        <div class="wd-gc" id="wd-gc2" data-wd-open="story" style="top:455.5px"></div>
-        <div class="wd-gcap" id="wd-gcap2" style="top:662.5px"></div>
-        <div class="wd-gsub" id="wd-gsub2" style="top:693.8px"></div>
+        <div class="wd-gc" id="wd-gc1" data-wd-open="wedding" style="top:118.6px"></div>
+        <div class="wd-gcap" id="wd-gcap1" style="top:326.9px"></div>
+        <div class="wd-gsub" id="wd-gsub1" style="top:358.2px"></div>
+        <div class="wd-gc" id="wd-gc2" data-wd-open="story" style="top:404.5px"></div>
+        <div class="wd-gcap" id="wd-gcap2" style="top:611.5px"></div>
+        <div class="wd-gsub" id="wd-gsub2" style="top:642.8px"></div>
       </div>
 
       <div id="wd-head">
@@ -2502,9 +2502,9 @@ function viewBtn(pillTop,arrowKey,origTop){
 const HEAD_LIST=["Your words","will become","part of our story."];
 function listSVG(){
   return rect(0,0,390,844,'#FFFEF9')
-   + T(28.46,113.23,32,'inter','#333','',{w:700,id:'hl0'})
-   + T(28.46,147.6,32,'inter','#333','',{w:700,id:'hl1'})
-   + T(28.46,181.98,32,'inter','#333','',{w:700,id:'hl2'})
+   + T(28.46,90.0,32,'inter','#333','',{w:700,id:'hl0'})
+   + T(28.46,124.3,32,'inter','#333','',{w:700,id:'hl1'})
+   + T(28.46,158.7,32,'inter','#333','',{w:700,id:'hl2'})
    + T(0,181.98,32,'inter','#333','|',{w:400,id:'curL',cls:'caret'})
    ;
 }
@@ -2513,7 +2513,7 @@ function listSVG(){
    A wish with no photo collapses to the short card when it is shorter than half of the photo card.
    Two short cards in a row share one carousel slot, stacked. */
 const CARD_MAX_H=358.1, CARD_FADE_Y=331.5;   // 5 lines are readable; from the 6th line the text fades
-const CARD_W=272.08, CARD_M=17.84, PHOTO_W=236.41, PHOTO_H=177.87, PHOTO_Y=60.35, CARD_GAP=40, BTN_GAP=30.73, CARD_TOP=230.81;
+const CARD_W=272.08, CARD_M=17.84, PHOTO_W=236.41, PHOTO_H=177.87, PHOTO_Y=60.35, CARD_GAP=40, BTN_GAP=30.73, CARD_TOP=207.5;
 const HEART_X=CARD_M+PHOTO_W-12.17, HEART_Y=18.87;
 const SHADOW_M={l:13.4,t:13.23,r:16.6,b:16.5};            // margins of the shadow around the card (file)
 const SMALL_S=218.34/272.08, SMALL_DY=34.03;
@@ -3531,8 +3531,8 @@ html,body{margin:0;height:100%;background:#FFFEF9;overflow:hidden}
   <svg id="cardLayer" viewBox="0 0 390 844" aria-hidden="false"><defs><filter id="cardShadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.04"/></filter></defs>
     <g id="panelG" opacity="0" style="pointer-events:none"><path d="M40.14 473.46H346.77C351.9 473.46 355.98 477.54 355.98 482.67V596.47C355.98 601.6 351.9 605.68 346.77 605.68H40.14C35.01 605.68 30.93 601.6 30.93 596.47V482.67C30.93 477.54 35.01 473.46 40.14 473.46Z" fill="#FFFAEC" filter="url(#cardShadow)"/><text x="70.21" y="509.24" font-family="'Cascadia Mono', monospace" font-size="16.11" fill="#666666" textLength="246" lengthAdjust="spacing">Cần cho phép định vị để xem</text><text x="143.14" y="532.65" font-family="'Cascadia Mono', monospace" font-size="16.11" fill="#666666" textLength="100" lengthAdjust="spacing">tuyến đường</text></g>
     <g id="cardG">
-      <path d="M349.51 724.29 L40.49 724.29 C36.06 724.29 32.48 720.7 32.48 716.28 L32.48 481.47 C32.48 477.05 36.06 473.46 40.49 473.46 L349.51 473.46 C353.94 473.46 357.52 477.05 357.52 481.47 L357.52 716.28 C357.52 720.7 353.94 724.29 349.51 724.29" fill="#FFFAEC" filter="url(#cardShadow)"/><path d="M287.36 693.2 C287.36 694.31 287.07 695.44 286.48 696.46 C285.45 698.26 283.37 701.01 279.31 703.91 L279.01 704.12 L278.71 703.91 C274.65 701.01 272.57 698.26 271.54 696.46 C270.55 694.74 270.38 692.68 271.09 690.97 C271.77 689.33 272.95 688.47 274.51 688.47 C277.03 688.47 278.38 689.45 279.01 690.12 C279.64 689.45 280.99 688.47 283.51 688.47 C285.07 688.47 286.25 689.33 286.93 690.97 C287.22 691.67 287.36 692.43 287.36 693.2" fill="#F43C1E" class="heart"/><path d="M86.94 498.45 L70.41 510.78 L53.89 498.45 L53.89 488.27 L70.41 500.59 L86.94 488.27 Z" fill="#F6E600" class="chev1"/><path d="M86.94 516.65 L70.41 528.98 L53.89 516.65 L53.89 506.47 L70.41 518.8 L86.94 506.47 Z" fill="#E6E6E6" class="chev2"/>
-      <text x="52.67" y="551.9" font-family="'Cascadia Mono', monospace" font-size="13.71" font-weight="350" fill="#333333" textLength="82.34" lengthAdjust="spacing">Wedding day</text><text x="52.67" y="592.74" font-family="'Cascadia Mono', monospace" font-size="41.41" font-weight="700" fill="#333333" textLength="226.1" lengthAdjust="spacing">20.12.2027</text><text x="52.67" y="628.15" font-family="'Cascadia Mono', monospace" font-size="18.06" font-weight="650" fill="#333333" textLength="157.77" lengthAdjust="spacing">Riverside Palace</text><text x="52.67" y="647.26" font-family="'Cascadia Mono', monospace" font-size="13.71" font-weight="350" fill="#333333" textLength="262.0" lengthAdjust="spacing">Bến Vân Đồn, Quận 4,TP. Hồ Chí Minh</text><text x="52.67" y="703.96" font-family="'Cascadia Mono', monospace" font-size="19.14" font-weight="700" fill="#333333" textLength="209.01" lengthAdjust="spacing">Join us to celebrate</text>
+      <path d="M349.51 659.69 L40.49 659.69 C36.06 659.69 32.48 656.1 32.48 651.68 L32.48 481.47 C32.48 477.05 36.06 473.46 40.49 473.46 L349.51 473.46 C353.94 473.46 357.52 477.05 357.52 481.47 L357.52 651.68 C357.52 656.1 353.94 659.69 349.51 659.69" fill="#FFFAEC" filter="url(#cardShadow)"/><path d="M86.94 498.45 L70.41 510.78 L53.89 498.45 L53.89 488.27 L70.41 500.59 L86.94 488.27 Z" fill="#F6E600" class="chev1"/><path d="M86.94 516.65 L70.41 528.98 L53.89 516.65 L53.89 506.47 L70.41 518.8 L86.94 506.47 Z" fill="#E6E6E6" class="chev2"/>
+      <text x="52.67" y="551.9" font-family="'Cascadia Mono', monospace" font-size="13.71" font-weight="350" fill="#333333" textLength="82.34" lengthAdjust="spacing">Wedding day</text><text x="52.67" y="588.1" font-family="'Cascadia Mono', monospace" font-size="34.17" font-weight="700" fill="#333333" textLength="187.9" lengthAdjust="spacing">20.12.2027</text><text x="52.67" y="623.5" font-family="'Cascadia Mono', monospace" font-size="18.06" font-weight="650" fill="#333333" textLength="157.77" lengthAdjust="spacing">Riverside Palace</text><text x="52.67" y="642.7" font-family="'Cascadia Mono', monospace" font-size="13.71" font-weight="350" fill="#333333" textLength="270.1" lengthAdjust="spacing">360D Bến Vân Đồn, P. Vĩnh Hội, TPHCM</text>
     </g>
   </svg>
 
